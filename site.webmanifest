@@ -1,0 +1,12 @@
+{
+  "name": "PREIZ Co.",
+  "short_name": "PREIZ",
+  "start_url": "./index.html",
+  "display": "browser",
+  "background_color": "#F5F4EF",
+  "theme_color": "#0F164D",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
