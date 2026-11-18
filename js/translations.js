@@ -60,6 +60,12 @@ PREIZ.i18n = {
     "common.available": "Në dispozicion",
     "common.viewAll": "Shiko të gjitha",
     "common.pages": "{n} faqe",
+    "common.package.one": "{n} paketë",
+    "common.products": "{n} produkte",
+    "common.product.one": "{n} produkt",
+    "common.requestProduct": "Kërko këtë produkt",
+    "common.onRequest": "Sipas kërkesës",
+    "common.onRequestNote": "na kontaktoni për çmimin",
 
     /* ---- Home: hero ---- */
     "home.hero.eyebrow": "PREIZ Co. · Shqipëri · Që nga 2026",
@@ -199,6 +205,11 @@ PREIZ.i18n = {
     "excl.pages": "Krijimin e faqeve shtesë të website-it",
     "excl.newDomain": "Regjistrimin e një domain-i të ri",
 
+
+    "nfc.pv.alt.stand": "Stenda e tavolinës NFC për Google, në të bardhë dhe në të zezë: një panel në formë L-je me simbolin NFC, pesë yje dhe mbishkrimin “Review us on Google”.",
+    "nfc.pv.alt.card": "Karta NFC për Google, në të bardhë dhe në të zezë: me simbolin NFC, pesë yje dhe mbishkrimin “Review us on Google”.",
+    "nfc.pv.colors": "E bardhë · E zezë",
+
     "services.help.title": "Nuk jeni të sigurt cila paketë ju përshtatet?",
     "services.help.body": "Na tregoni për biznesin tuaj dhe do t'ju rekomandojmë opsionin e duhur.",
 
@@ -227,6 +238,7 @@ PREIZ.i18n = {
     "contact.form.opening": "Po hapet WhatsApp…",
     "contact.form.namePrefix": "Emri",
     "contact.form.packageMsg": "Përshëndetje PREIZ Co., më intereson paketa {name} ({price}). ",
+    "contact.form.productMsg": "Përshëndetje PREIZ Co., më intereson produkti {name}{price}. ",
     "contact.methods.title": "Mënyra të tjera kontakti",
     "contact.wa.title": "WhatsApp",
     "contact.wa.body": "Nisni një bisedë direkt, pa pasur nevojë të shkruani mesazh këtu.",
@@ -300,6 +312,12 @@ PREIZ.i18n = {
     "common.available": "Available",
     "common.viewAll": "View all",
     "common.pages": "{n} pages",
+    "common.package.one": "{n} package",
+    "common.products": "{n} products",
+    "common.product.one": "{n} product",
+    "common.requestProduct": "Request this product",
+    "common.onRequest": "On request",
+    "common.onRequestNote": "contact us for pricing",
 
     "home.hero.eyebrow": "PREIZ Co. · Albania · Since 2026",
     "home.hero.title": "Modern products and solutions, starting with <em>digital</em>.",
@@ -431,6 +449,11 @@ PREIZ.i18n = {
     "excl.pages": "Creation of additional website pages",
     "excl.newDomain": "Registration of a new domain",
 
+
+    "nfc.pv.alt.stand": "The Google NFC table stand in white and black: an L-shaped panel with the NFC symbol, five stars and the words “Review us on Google”.",
+    "nfc.pv.alt.card": "The Google NFC card in white and black, with the NFC symbol, five stars and the words “Review us on Google”.",
+    "nfc.pv.colors": "White · Black",
+
     "services.help.title": "Not sure which package fits?",
     "services.help.body": "Tell us about your business and we'll recommend the right option.",
 
@@ -457,6 +480,7 @@ PREIZ.i18n = {
     "contact.form.opening": "Opening WhatsApp…",
     "contact.form.namePrefix": "Name",
     "contact.form.packageMsg": "Hello PREIZ Co., I'm interested in the {name} package ({price}). ",
+    "contact.form.productMsg": "Hello PREIZ Co., I'm interested in the {name}{price}. ",
     "contact.methods.title": "Other ways to reach us",
     "contact.wa.title": "WhatsApp",
     "contact.wa.body": "Start a chat directly, without writing a message here first.",

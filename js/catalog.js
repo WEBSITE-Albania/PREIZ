@@ -28,9 +28,8 @@ PREIZ.catalog = {
       name: { sq: "Zgjidhje Dixhitale", en: "Digital Solutions" }
     },
     {
-      // Prepared for the future. Switch to "active" once products are ready.
       id: "physical",
-      status: "hidden",
+      status: "active",
       name: { sq: "Produkte Fizike", en: "Physical Products" }
     }
   ],
@@ -124,6 +123,94 @@ PREIZ.catalog = {
         "excl.pages",
         "excl.newDomain"
       ]
+    },
+
+    {
+      id: "google-nfc-cards",
+      group: "physical",
+      status: "active",
+      index: "02",
+      name: { sq: "Karta Google NFC", en: "Google NFC Cards" },
+      summary: {
+        sq: "Më shumë vlerësime në Google, pa asnjë mundim: klientët e prekin stendën ose kartën me telefon dhe hapin menjëherë faqen e vlerësimeve të biznesit tuaj.",
+        en: "More Google reviews, with no effort: customers tap the stand or card with their phone and instantly open your business's review page."
+      },
+
+      // "products" → counts and buttons say "product" instead of "package"
+      unit: "products",
+      showFromPrice: true,
+
+      items: [
+        {
+          id: "google-nfc-table-stand",
+          name: { sq: "Stendë Tavoline NFC Google", en: "Google NFC Table Stand" },
+          badge: { sq: "Stendë tavoline", en: "Table stand" },
+          price: 2000,
+          currency: "ALL",                       // shown as "2,000 ALL"
+          priceSuffix: { sq: "/copë", en: "/piece" },
+          visual: "stand",                       // product mockup drawn in render.js
+          dims: { sq: "76 × 127.5 mm · bazë 50 mm", en: "76 × 127.5 mm · 50 mm base" },
+          description: {
+            sq: "Një stendë në formë L-je që qëndron vetë mbi tavolinë, banak ose recepsion. Klientët e shohin menjëherë dhe e prekin me telefon për t'ju vlerësuar në Google.",
+            en: "An L-shaped stand that sits on its own on a table, counter or reception desk. Customers see it straight away and tap it with their phone to review you on Google."
+          },
+          features: [
+            { sq: "Qëndron vetë — pa mbajtëse, pa ngjitës", en: "Stands on its own — no holder, no adhesive" },
+            { sq: "Përmasa: 76 × 127.5 mm, bazë 50 mm", en: "Size: 76 × 127.5 mm, 50 mm base" },
+            { sq: "E lidhur me faqen tuaj të vlerësimeve në Google", en: "Linked to your Google review page" },
+            { sq: "Në të bardhë ose në të zezë", en: "In white or black" }
+          ]
+        },
+        {
+          id: "google-nfc-card",
+          name: { sq: "Kartë NFC Google", en: "Google NFC Card" },
+          badge: { sq: "Kartë portabël", en: "Portable card" },
+          price: 1500,
+          currency: "ALL",
+          priceSuffix: { sq: "/copë", en: "/piece" },
+          visual: "card",
+          dims: { sq: "54 × 86 mm", en: "54 × 86 mm" },
+          description: {
+            sq: "Një kartë në madhësinë e një karte bankare, e lehtë për t'u mbajtur, për t'ua dhënë klientëve ose për ta vendosur kudo. Një prekje me telefon hap faqen tuaj të vlerësimeve në Google.",
+            en: "A card the size of a bank card, easy to carry, hand to customers or place anywhere. One tap with a phone opens your Google review page."
+          },
+          features: [
+            { sq: "Madhësia e një karte bankare: 54 × 86 mm", en: "Bank-card size: 54 × 86 mm" },
+            { sq: "E lehtë dhe e lëvizshme", en: "Light and easy to carry" },
+            { sq: "E lidhur me faqen tuaj të vlerësimeve në Google", en: "Linked to your Google review page" },
+            { sq: "Në të bardhë ose në të zezë", en: "In white or black" }
+          ]
+        }
+      ],
+
+      // Two-product layout + "How it works" steps (render.js → showcase)
+      showcase: {
+        label: { sq: "Si funksionon", en: "How it works" },
+        title: { sq: "Një prekje deri te vlerësimet tuaja në Google.", en: "One tap to your Google reviews." },
+        steps: [
+          {
+            title: { sq: "Klienti prek stendën ose kartën", en: "The customer taps the stand or card" },
+            body: {
+              sq: "Mjafton ta afrojë telefonin te produkti — në banak, në tavolinë ose në recepsion. Funksionon me telefonat që kanë NFC, pa aplikacion.",
+              en: "They simply hold their phone near it — at the counter, on the table or at reception. Works with NFC-enabled phones, no app needed."
+            }
+          },
+          {
+            title: { sq: "Hapet faqja e vlerësimeve", en: "Your review page opens" },
+            body: {
+              sq: "Faqja e vlerësimeve në Google e biznesit tuaj shfaqet menjëherë në telefon, pa e kërkuar.",
+              en: "Your business's Google review page appears instantly on their phone, with no searching."
+            }
+          },
+          {
+            title: { sq: "Vlerësimi lihet në sekonda", en: "The review takes seconds" },
+            body: {
+              sq: "Klienti zgjedh yjet dhe shkruan komentin. Më pak hapa do të thotë më shumë vlerësime.",
+              en: "The customer picks the stars and writes a comment. Fewer steps means more reviews."
+            }
+          }
+        ]
+      }
     }
 
     /* ---------------------------------------------------------------
@@ -134,7 +221,7 @@ PREIZ.catalog = {
       id: "personalized-products",
       group: "physical",
       status: "hidden",
-      index: "02",
+      index: "03",
       name: { sq: "Produkte të Personalizuara", en: "Personalized Products" },
       summary: { sq: "...", en: "..." },
       showFromPrice: true,

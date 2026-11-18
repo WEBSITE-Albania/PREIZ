@@ -40,8 +40,30 @@
   function groupOf(cat) {
     return P.catalog.groups.find(function (g) { return g.id === cat.group; });
   }
-  function minPrice(cat) {
-    return Math.min.apply(null, cat.items.map(function (i) { return i.price; }));
+  function hasPrice(item) { return typeof item.price === "number"; }
+  /* Item price as text: "€80", or "2,000 ALL" when the item has its own currency */
+  function groupThousands(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  P.itemPrice = function (item, n) {
+    n = n == null ? item.price : n;
+    if (item.currency) return groupThousands(n) + " " + item.currency;
+    return P.price(n);
+  };
+  /* Same, as HTML with the currency code set smaller */
+  function priceMarkup(item) {
+    if (!item.currency) return esc(P.price(item.price));
+    return esc(groupThousands(item.price)) + ' <small class="cur">' + esc(item.currency) + '</small>';
+  }
+  function cheapest(cat) {
+    var priced = cat.items.filter(hasPrice);
+    if (!priced.length) return null;
+    return priced.reduce(function (a, b) { return b.price < a.price ? b : a; });
+  }
+  /* "5 packages", "1 package", "1 product"… (category.unit: "products") */
+  function countLabel(cat) {
+    var n = cat.items.length;
+    var key = cat.unit === "products" ? (n === 1 ? "common.product.one" : "common.products")
+                                      : (n === 1 ? "common.package.one" : "common.packages");
+    return P.t(key, { n: n });
   }
   P.findItem = function (id) {
     var found = null;
@@ -81,7 +103,9 @@
               (item.featured ? ' <span class="flag">' + esc(P.t("common.featured")) + '</span>' : "") +
             '</span><span class="row-desc">' + esc(P.L(item.description)) + '</span></span>' +
             '<span class="row-meta">' + esc(pages) + '</span>' +
-            '<span class="row-price">' + esc(P.price(item.price)) + '</span>' +
+            (hasPrice(item)
+              ? '<span class="row-price' + (item.currency ? " has-cur" : "") + '">' + priceMarkup(item) + '</span>'
+              : '<span class="row-price is-quote">' + esc(P.t("common.onRequest")) + '</span>') +
             '<span class="row-arrow">' + ICON.arrow + '</span>' +
           '</a></li>';
       }).join("");
@@ -92,8 +116,8 @@
           '<div><p class="cp-group">' + esc(P.L(groupOf(c).name)) + '</p>' +
           '<h3 class="cp-name">' + esc(P.L(c.name)) + '</h3></div>' +
           '<p class="cp-summary">' + esc(P.L(c.summary)) + '</p>' +
-          '<p class="cp-from">' + esc(P.t("common.packages", { n: c.items.length })) +
-            (c.showFromPrice ? ' · ' + esc(P.t("common.from")) + ' <strong>' + esc(P.price(minPrice(c))) + '</strong>' : "") + '</p>' +
+          '<p class="cp-from">' + esc(countLabel(c)) +
+            (c.showFromPrice && cheapest(c) ? ' · ' + esc(P.t("common.from")) + ' <strong>' + esc(P.itemPrice(cheapest(c))) + '</strong>' : "") + '</p>' +
         '</div>' +
         '<ol class="rows">' + rows + '</ol>' +
       '</div>';
@@ -106,10 +130,118 @@
     var links = activeCategories().map(function (c) {
       return '<li><a href="#' + esc(c.id) + '"><span class="ci-idx">' + esc(c.index) + '</span>' +
         '<span><small>' + esc(P.L(groupOf(c).name)) + '</small>' + esc(P.L(c.name)) + '</span>' +
-        '<span class="ci-count">' + esc(P.t("common.packages", { n: c.items.length })) + '</span></a></li>';
+        '<span class="ci-count">' + esc(countLabel(c)) + '</span></a></li>';
     }).join("");
     el.innerHTML = links + '<li class="ci-more">' + ICON.minus + '<span>' + esc(P.t("services.index.more")) + '</span></li>';
   }
+
+  /* ---------------- Product visuals (physical products) ----------------
+     Graphic recreations of the real products, built with CSS 3D and SVG.
+     All sizes are in millimetres (1mm = var(--mm)), so products keep their
+     true proportions and their real size relative to each other.          */
+  var uid = 0;
+  function starPath(cx, cy, R) {
+    var pts = [];
+    for (var k = 0; k < 10; k++) {
+      var r = k % 2 ? R * 0.45 : R;
+      var a = -Math.PI / 2 + k * Math.PI / 5;
+      pts.push((cx + r * Math.cos(a)).toFixed(2) + "," + (cy + r * Math.sin(a)).toFixed(2));
+    }
+    return "M" + pts.join("L") + "Z";
+  }
+
+  /* Printed face of the stand / card (w × h in mm). dark = black version. */
+  function faceSVG(w, h, dark, roundBottom) {
+    var id = "pvg" + (++uid);
+    var bg = dark ? "#141415" : "#FBFBFA";
+    var ink = dark ? "#F4F4F4" : "#1B1B1D";
+    var text = dark ? "#E4E4E6" : "#44464E";
+    var cx = w / 2, r = w * 0.058;
+    var shape = roundBottom
+      ? '<rect width="' + w + '" height="' + h + '" rx="' + r + '"/>'
+      : '<path d="M0 ' + h + 'V' + r + 'Q0 0 ' + r + ' 0H' + (w - r) + 'Q' + w + ' 0 ' + w + ' ' + r + 'V' + h + 'Z"/>';
+
+    // NFC symbol: two arcs + dot
+    var dy = h * 0.2, sw = w * 0.052;
+    function arc(R) {
+      var x1 = cx - R * Math.SQRT1_2, y = dy - R * Math.SQRT1_2, x2 = cx + R * Math.SQRT1_2;
+      return '<path d="M' + x1.toFixed(2) + ' ' + y.toFixed(2) + 'A' + R + ' ' + R + ' 0 0 1 ' + x2.toFixed(2) + ' ' + y.toFixed(2) + '"/>';
+    }
+    var nfc = '<g fill="none" stroke="' + ink + '" stroke-width="' + sw.toFixed(2) + '" stroke-linecap="round">' +
+      arc(w * 0.205) + arc(w * 0.118) + '</g>' +
+      '<circle cx="' + cx + '" cy="' + (dy - w * 0.01).toFixed(2) + '" r="' + (w * 0.036).toFixed(2) + '" fill="' + ink + '"/>';
+
+    // Central review mark (neutral symbol in the logo position)
+    var mw = w * 0.5, mh = w * 0.4, mx = cx - mw / 2, my = h * 0.43 - mh / 2;
+    var mark = '<path fill="' + text + '" d="M' + (mx + mw * 0.16).toFixed(2) + ' ' + my.toFixed(2) +
+      'H' + (mx + mw * 0.84).toFixed(2) + 'Q' + (mx + mw) + ' ' + my.toFixed(2) + ' ' + (mx + mw) + ' ' + (my + mh * 0.2).toFixed(2) +
+      'V' + (my + mh * 0.8).toFixed(2) + 'Q' + (mx + mw) + ' ' + (my + mh).toFixed(2) + ' ' + (mx + mw * 0.84).toFixed(2) + ' ' + (my + mh).toFixed(2) +
+      'H' + (mx + mw * 0.36).toFixed(2) + 'L' + (mx + mw * 0.16).toFixed(2) + ' ' + (my + mh * 1.22).toFixed(2) +
+      'V' + (my + mh).toFixed(2) + 'Q' + mx.toFixed(2) + ' ' + (my + mh).toFixed(2) + ' ' + mx.toFixed(2) + ' ' + (my + mh * 0.8).toFixed(2) +
+      'V' + (my + mh * 0.2).toFixed(2) + 'Q' + mx.toFixed(2) + ' ' + my.toFixed(2) + ' ' + (mx + mw * 0.16).toFixed(2) + ' ' + my.toFixed(2) + 'Z"/>' +
+      '<path fill="' + bg + '" d="' + starPath(cx, my + mh * 0.53, mh * 0.34) + '"/>';
+
+    // Five gold stars
+    var st = "", sy = h * 0.665, sr = w * 0.05, gap = w * 0.108;
+    for (var k = -2; k <= 2; k++) st += '<path d="' + starPath(cx + k * gap, sy, sr) + '"/>';
+    var starsG = '<g fill="url(#' + id + 's)">' + st + '</g>';
+
+    var fs = (w * 0.135).toFixed(2);
+    var words = '<g fill="' + text + '" font-size="' + fs + '" font-weight="500" text-anchor="middle" letter-spacing="-0.2">' +
+      '<text x="' + cx + '" y="' + (h * 0.815).toFixed(2) + '">Review us</text>' +
+      '<text x="' + cx + '" y="' + (h * 0.915).toFixed(2) + '">on Google</text></g>';
+
+    return '<svg class="pv-art" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="' + id + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD54A"/><stop offset="1" stop-color="#F0A81C"/></linearGradient>' +
+        '<linearGradient id="' + id + 'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="' + (dark ? 0.16 : 0.5) + '"/>' +
+          '<stop offset="0.42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="' + (dark ? 0.25 : 0.07) + '"/></linearGradient>' +
+        '<clipPath id="' + id + 'c">' + shape + '</clipPath>' +
+      '</defs>' +
+      '<g clip-path="url(#' + id + 'c)">' +
+        '<rect width="' + w + '" height="' + h + '" fill="' + bg + '"/>' +
+        nfc + mark + starsG + words +
+        '<rect width="' + w + '" height="' + h + '" fill="url(#' + id + 'g)"/>' +
+      '</g></svg>';
+  }
+
+  function edgeLayers(n) {
+    var s = "";
+    for (var k = 1; k <= n; k++) s += '<span class="pv-ly" style="--k:' + k + '"></span>';
+    return s;
+  }
+
+  function standObj(dark, x, z, ry) {
+    return '<div class="pv-obj st' + (dark ? " is-dark" : "") + '" style="--x:' + x + ';--z:' + z + ';--ry:' + ry + '">' +
+      '<div class="st-floor"></div>' +
+      '<div class="st-base">' + edgeLayers(4) + '<div class="pv-face st-base-top"></div></div>' +
+      '<div class="st-face">' + edgeLayers(4) + '<div class="pv-face">' + faceSVG(76, 127.5, dark, false) + '</div></div>' +
+    '</div>';
+  }
+  function cardObj(dark, x, y, z, ry, rz) {
+    return '<div class="pv-obj cd' + (dark ? " is-dark" : "") + '" style="--x:' + x + ';--y:' + y + ';--z:' + z + ';--ry:' + ry + ';--rz:' + rz + '">' +
+      edgeLayers(2) + '<div class="pv-face">' + faceSVG(54, 86, dark, true) + '</div>' +
+    '</div>';
+  }
+
+  function productVisual(item, kind, objects) {
+    return '<div class="pv pv-' + kind + '" role="img" aria-label="' + esc(P.t("nfc.pv.alt." + kind)) + '">' +
+      '<div class="pv-top" aria-hidden="true"><span>' + esc(P.L(item.badge)) + '</span><span>' + esc(P.L(item.dims)) + '</span></div>' +
+      '<div class="pv-scene" aria-hidden="true"><div class="pv-world">' + objects + '</div></div>' +
+      '<div class="pv-swatches" aria-hidden="true"><i></i><i class="is-dark"></i><span>' + esc(P.t("nfc.pv.colors")) + '</span></div>' +
+    '</div>';
+  }
+
+  var PRODUCT_VISUALS = {
+    stand: function (item) {
+      return productVisual(item, "stand", standObj(true, 34, -30, 0) + standObj(false, -28, 12, 0));
+    },
+    card: function (item) {
+      return productVisual(item, "card",
+        '<div class="cd-floor"></div>' +
+        cardObj(true, 22, -30, -26, -6, 7) + cardObj(false, -18, -22, 14, 10, -6));
+    }
+  };
 
   /* ---------------- Package card ---------------- */
   function packageCard(item, i, cat) {
@@ -133,18 +265,26 @@
       : "";
 
     var suffix = item.priceSuffix ? P.L(item.priceSuffix) : P.t("common.oneTime");
+    var priceHtml = hasPrice(item)
+      ? '<span class="amount">' + priceMarkup(item) + '</span><span class="note">' + esc(suffix) + '</span>'
+      : '<span class="amount is-quote">' + esc(P.t("common.onRequest")) + '</span><span class="note">' + esc(P.t("common.onRequestNote")) + '</span>';
+    var primary = item.featured || !!cat.showcase;
+    var requestKey = cat.unit === "products" ? "common.requestProduct" : "common.request";
 
-    return '<article class="pkg reveal' + (item.featured ? " is-featured" : "") + '" id="' + esc(item.id) + '" style="--d:' + (i * 60) + 'ms">' +
+    var visual = item.visual && PRODUCT_VISUALS[item.visual] ? PRODUCT_VISUALS[item.visual](item) : "";
+
+    return '<article class="pkg reveal' + (item.featured ? " is-featured" : "") + (visual ? " has-visual" : "") + '" id="' + esc(item.id) + '" style="--d:' + (i * 60) + 'ms">' +
+      visual +
       '<div class="pkg-top"><span class="pkg-idx">' + esc(cat.index) + "." + pad(i + 1) + '</span>' +
         (item.featured ? '<span class="flag">' + esc(P.t("common.featured")) + '</span>' : "") + '</div>' +
       '<h3 class="pkg-name">' + esc(P.L(item.name)) + '</h3>' +
       '<p class="pkg-desc">' + esc(P.L(item.description)) + '</p>' +
       includes +
       '<div class="pkg-foot">' +
-        '<div class="pkg-price"><span class="amount">' + esc(P.price(item.price)) + '</span><span class="note">' + esc(suffix) + '</span></div>' +
+        '<div class="pkg-price">' + priceHtml + '</div>' +
         maint +
-        '<a class="btn ' + (item.featured ? "btn-primary" : "btn-outline") + ' btn-block" href="contact.html?package=' + encodeURIComponent(item.id) + '">' +
-          '<span>' + esc(P.t("common.request")) + '</span>' + ICON.arrow + '</a>' +
+        '<a class="btn ' + (primary ? "btn-primary" : "btn-outline") + ' btn-block" href="contact.html?package=' + encodeURIComponent(item.id) + '">' +
+          '<span>' + esc(P.t(requestKey)) + '</span>' + ICON.arrow + '</a>' +
       '</div>' +
     '</article>';
   }
@@ -226,6 +366,37 @@
     '</div>';
   }
 
+  /* ---------------- Showcase (product visual + how it works) ---------------- */
+  var STEP_ICON = [
+    // tap
+    '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="4" width="14" height="24" rx="2.5"/><path d="M14 24.5h4"/><path d="M4.5 12a6 6 0 0 1 0 8M1.8 9.5a10 10 0 0 1 0 13"/></svg>',
+    // open page
+    '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="24" height="20" rx="2"/><path d="M4 11h24"/><path d="M13 19h9m-3.5-3.5L22 19l-3.5 3.5"/></svg>',
+    // star
+    '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="m16 4.5 3.4 7.2 7.8 1-5.7 5.4 1.4 7.8L16 22.1l-6.9 3.8 1.4-7.8-5.7-5.4 7.8-1z"/></svg>'
+  ];
+  function showcaseBlock(cat) {
+    var sc = cat.showcase;
+    var top = '<div class="product-grid count-' + cat.items.length + '">' +
+      cat.items.map(function (item, i) { return packageCard(item, i, cat); }).join("") +
+    '</div>';
+
+    var steps = "";
+    if (sc.steps && sc.steps.length) {
+      steps = '<div class="steps-block" id="' + esc(cat.id) + '-how">' +
+        '<div class="sub-head reveal"><p class="label">' + esc(P.L(sc.label)) + '</p>' +
+        '<h3 class="h3">' + esc(P.L(sc.title)) + '</h3></div>' +
+        '<ol class="xb-grid">' + sc.steps.map(function (st, i) {
+          return '<li class="xb step reveal" style="--d:' + (i * 60) + 'ms">' +
+            '<p class="xb-k step-k"><span>' + pad(i + 1) + '</span>' + (STEP_ICON[i] || "") + '</p>' +
+            '<h4 class="step-t">' + esc(P.L(st.title)) + '</h4>' +
+            '<p class="xb-d">' + esc(P.L(st.body)) + '</p>' +
+          '</li>';
+        }).join("") + '</ol></div>';
+    }
+    return top + steps;
+  }
+
   /* ---------------- Full catalog (services page) ---------------- */
   function catalog(el) {
     el.innerHTML = activeGroups().map(function (g) {
@@ -240,9 +411,10 @@
               '<h2 class="h2" id="cat-' + esc(c.id) + '">' + esc(P.L(c.name)) + '</h2></div>' +
               '<p class="lead">' + esc(P.L(c.summary)) + '</p>' +
             '</header>' +
+            (c.showcase ? showcaseBlock(c) :
             '<div class="pkg-grid count-' + c.items.length + '">' +
               c.items.map(function (item, i) { return packageCard(item, i, c); }).join("") +
-            '</div>' +
+            '</div>') +
             extrasBlock(c) +
             maintenanceBlock(c) +
           '</div>' +

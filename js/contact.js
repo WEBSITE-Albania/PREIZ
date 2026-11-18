@@ -27,6 +27,12 @@
 
     function packageText() {
       if (!found) return "";
+      if (found.category.unit === "products") {
+        return P.t("contact.form.productMsg", {
+          name: P.L(found.item.name),
+          price: typeof found.item.price === "number" ? " (" + P.itemPrice(found.item) + ")" : ""
+        });
+      }
       return P.t("contact.form.packageMsg", {
         name: P.L(found.item.name),
         price: P.price(found.item.price)
