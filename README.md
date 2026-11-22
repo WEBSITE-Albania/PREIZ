@@ -64,22 +64,23 @@ Open `js/catalog.js` and find the package:
 ```js
 {
   id: "premium-website",
-  name: { sq: "Website Premium", en: "Premium Website" },
-  price: 270,          // ← development price (€)
-  maintenance: 70,     // ← annual maintenance (€/year)
+  name: { sq: "Premium Website", en: "Premium Website" },
+  price: 25000,        // ← development price (lekë)
+  maintenance: 6000,   // ← annual maintenance (lekë/year)
   ...
 }
 ```
 
-Change the numbers and save. Every page updates: the package cards, the homepage preview, the maintenance table, the "from €…" labels and the WhatsApp message prefilled when someone clicks "Request this package".
+Change the numbers and save. Every page updates: the package cards, the price formatting (8.000 lekë / 8,000 lek) and the WhatsApp message prefilled when someone clicks "Request this package".
 
 Additional pricing rules are in the same category, under `extras`:
 
 ```js
 extras: {
   additionalLanguagePercent: 20,   // extra language = +20% of the package price
-  domainFrom: 20,                  // custom domain from ~€20
-  seoIncludedWithDomain: true
+  domainFrom: 2000,                // domain from 2.000 lekë
+  hostingIncluded: true,
+  seoIncluded: true
 }
 ```
 

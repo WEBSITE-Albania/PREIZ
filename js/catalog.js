@@ -11,10 +11,11 @@
 
    STATUS
      "active"   → shown to visitors and can be ordered
+     "soon"     → shown as "Coming Soon": no items, prices or order buttons
      "hidden"   → prepared but not shown anywhere (use while building a category)
 
    Every visible text is bilingual: { sq: "...", en: "..." }.
-   Prices are numbers in euro. Change a number and every page updates.
+   Prices are numbers in Albanian lek. Change a number and every page updates.
    ========================================================================= */
 
 window.PREIZ = window.PREIZ || {};
@@ -39,114 +40,116 @@ PREIZ.catalog = {
       id: "web-development",
       group: "digital",
       status: "active",
-      index: "01",
-      name: { sq: "Zhvillim Website-sh", en: "Web Development" },
+      icon: "web",
+      name: { sq: "Zhvillim Website-sh", en: "Website Development" },
       summary: {
-        sq: "Prezenca online e ndërtuar me kujdes: nga një profil i thjeshtë dixhital deri te një website i plotë për biznesin tuaj.",
-        en: "A carefully built online presence: from a simple digital profile to a complete website for your business."
+        sq: "Prezenca online e ndërtuar me kujdes: nga një portofol i thjeshtë dixhital deri te një website i plotë për biznesin tuaj.",
+        en: "A carefully built online presence: from a simple digital portfolio to a complete website for your business."
       },
 
-      // Shown on cards as the starting price for the category
-      showFromPrice: true,
+      // Content areas compared side by side on the Basic / Premium cards
+      // (labels in PREIZ.pageLabels below). These are content areas, not a
+      // promise of separate HTML pages.
+      compareAreas: ["home", "about", "products", "contact", "gallery", "reviews", "faq", "custom"],
 
       items: [
         {
-          id: "digital-profile",
-          name: { sq: "Profil Dixhital", en: "Digital Profile" },
-          price: 80,
-          maintenance: 35,
+          id: "digital-portfolio",
+          name: { sq: "Portofol Dixhital", en: "Digital Portfolio" },
+          price: 8000,
+          maintenance: 3500,
           description: {
-            sq: "Një prezencë dixhitale e thjeshtë dhe elegante për të prezantuar online një biznes, një profesionist ose një shërbim.",
-            en: "A simple and elegant digital presence designed to introduce a business, professional, or service online."
+            sq: "Një prezantim dixhital i thjeshtë dhe i strukturuar në një faqe të vetme, për individë ose biznese që kanë nevojë për një profil të përmbledhur online.",
+            en: "A simple, structured single-page digital presentation for individuals or businesses that need a concise online profile."
           },
-          pages: null
+          featuresLabel: { sq: "Mund të përfshijë", en: "May include" },
+          features: [
+            { sq: "Prezantim personal ose i biznesit", en: "Personal or business introduction" },
+            { sq: "Informacione kryesore", en: "Relevant information" },
+            { sq: "Fotografi", en: "Photographs" },
+            { sq: "Të dhëna kontakti", en: "Contact details" }
+          ]
         },
         {
           id: "digital-menu",
           name: { sq: "Menu Dixhitale", en: "Digital Menu" },
-          price: 100,
-          maintenance: 40,
+          price: 10000,
+          maintenance: 4000,
           description: {
-            sq: "Një menu online me kategori të organizuara, që u lejon klientëve të shfletojnë lehtësisht ushqimet dhe pijet në dispozicion.",
-            en: "An online menu with organized categories, allowing customers to conveniently explore available food and beverage options."
+            sq: "Një menu online me kategori të organizuara produktesh, pa kufi në numrin e produkteve apo të kategorive.",
+            en: "An online menu with organized product categories, with no limit on the number of products or categories."
           },
-          pages: null
-        },
-        {
-          id: "mini-website",
-          name: { sq: "Mini Website", en: "Mini Website" },
-          price: 150,
-          maintenance: 45,
-          description: {
-            sq: "Një website kompakt me informacionin thelbësor të biznesit dhe të dhënat e kontaktit.",
-            en: "A compact website providing essential business information and contact details."
-          },
-          pages: ["home", "about", "contact"]
+          featuresLabel: { sq: "Mund të përfshijë", en: "May include" },
+          features: [
+            { sq: "Kategori produktesh", en: "Product categories" },
+            { sq: "Emrat e produkteve", en: "Product names" },
+            { sq: "Përshkrime dhe përbërës", en: "Descriptions and ingredients" },
+            { sq: "Fotografi", en: "Photographs" },
+            { sq: "Çmime", en: "Prices" }
+          ]
         },
         {
           id: "basic-website",
-          name: { sq: "Website Bazë", en: "Basic Website" },
-          price: 220,
-          maintenance: 55,
+          name: { sq: "Basic Website", en: "Basic Website" },
+          price: 18000,
+          maintenance: 5000,
           description: {
-            sq: "Një website i plotë për të prezantuar biznesin, ofertën dhe identitetin e tij vizual.",
-            en: "A complete website designed to present a business, its offerings, and its visual identity."
+            sq: "Një website për të prezantuar biznesin, produktet dhe të dhënat tuaja të kontaktit.",
+            en: "A website that presents your business, your products and your contact details."
           },
-          pages: ["home", "about", "products", "gallery", "contact"]
+          areas: ["home", "about", "products", "contact"]
         },
         {
           id: "premium-website",
-          name: { sq: "Website Premium", en: "Premium Website" },
-          price: 270,
-          maintenance: 70,
+          name: { sq: "Premium Website", en: "Premium Website" },
+          price: 25000,
+          maintenance: 6000,
           featured: true, // receives subtle visual emphasis
           description: {
-            sq: "Një website më gjithëpërfshirës, për një përvojë dixhitale më të pasur dhe një prezantim më të detajuar të biznesit.",
-            en: "A more comprehensive website designed to provide a richer digital experience and a more detailed business presentation."
+            sq: "Gjithçka që përfshin Basic, plus seksione shtesë për një prezantim më të plotë të biznesit.",
+            en: "Everything in Basic, plus additional sections for a more complete business presentation."
           },
-          pages: ["home", "about", "products", "gallery", "reviews", "faq", "contact"]
+          areas: ["home", "about", "products", "contact", "gallery", "reviews", "faq", "custom"]
         }
       ],
 
-      // Extra pricing rules shown under this category's packages
+      // Additional information shown under the packages (render.js → extrasBlock)
       extras: {
-        additionalLanguagePercent: 20,   // +20% of the package price
-        domainFrom: 20,                  // custom domain from ~€20
-        seoIncludedWithDomain: true
+        additionalLanguagePercent: 20,   // +20% of the development price per language
+        domainFrom: 2000,                // domain registration from 2.000 lekë
+        hostingIncluded: true,
+        seoIncluded: true
       },
 
-      // Annual maintenance exclusions (keys are translated in translations.js)
-      maintenanceExclusions: [
-        "excl.domainRenewal",
-        "excl.redesign",
-        "excl.features",
-        "excl.pages",
-        "excl.newDomain"
-      ]
+      // Annual maintenance: what is / isn't covered (keys in translations.js)
+      maintenanceIncludes: ["maint.inc.texts", "maint.inc.prices", "maint.inc.items", "maint.inc.small"],
+      maintenanceExclusions: ["maint.exc.redesign", "maint.exc.pages", "maint.exc.features", "maint.exc.domain"]
     },
 
     {
       id: "google-nfc-cards",
       group: "physical",
       status: "active",
-      index: "02",
+      icon: "nfc",
       name: { sq: "Karta Google NFC", en: "Google NFC Cards" },
       summary: {
         sq: "Më shumë vlerësime në Google, pa asnjë mundim: klientët e prekin stendën ose kartën me telefon dhe hapin menjëherë faqen e vlerësimeve të biznesit tuaj.",
         en: "More Google reviews, with no effort: customers tap the stand or card with their phone and instantly open your business's review page."
       },
 
-      // "products" → counts and buttons say "product" instead of "package"
+      // "products" → buttons say "product" instead of "package"
       unit: "products",
-      showFromPrice: true,
+
+      // Bulk price applies to orders of MORE than 10 pieces (11 or more) of the same product
+      bulkAbove: 10,
 
       items: [
         {
           id: "google-nfc-table-stand",
-          name: { sq: "Stendë Tavoline NFC Google", en: "Google NFC Table Stand" },
+          name: { sq: "Stendë Tavoline NFC", en: "NFC Table Stand" },
           badge: { sq: "Stendë tavoline", en: "Table stand" },
-          price: 2000,
-          currency: "ALL",                       // shown as "2,000 ALL"
+          price: 1500,
+          bulkPrice: 1200,
           priceSuffix: { sq: "/copë", en: "/piece" },
           visual: "stand",                       // product mockup drawn in render.js
           dims: { sq: "76 × 127.5 mm · bazë 50 mm", en: "76 × 127.5 mm · 50 mm base" },
@@ -163,10 +166,10 @@ PREIZ.catalog = {
         },
         {
           id: "google-nfc-card",
-          name: { sq: "Kartë NFC Google", en: "Google NFC Card" },
+          name: { sq: "Kartë Google NFC", en: "Google NFC Card" },
           badge: { sq: "Kartë portabël", en: "Portable card" },
-          price: 1500,
-          currency: "ALL",
+          price: 1000,
+          bulkPrice: 800,
           priceSuffix: { sq: "/copë", en: "/piece" },
           visual: "card",
           dims: { sq: "54 × 86 mm", en: "54 × 86 mm" },
@@ -185,59 +188,33 @@ PREIZ.catalog = {
 
       // Two-product layout + "How it works" steps (render.js → showcase)
       showcase: {
-        label: { sq: "Si funksionon", en: "How it works" },
-        title: { sq: "Një prekje deri te vlerësimet tuaja në Google.", en: "One tap to your Google reviews." },
+        title: { sq: "Një prekje deri te vlerësimet tuaja në Google", en: "One tap to your Google reviews" },
         steps: [
-          {
-            title: { sq: "Klienti prek stendën ose kartën", en: "The customer taps the stand or card" },
-            body: {
-              sq: "Mjafton ta afrojë telefonin te produkti — në banak, në tavolinë ose në recepsion. Funksionon me telefonat që kanë NFC, pa aplikacion.",
-              en: "They simply hold their phone near it — at the counter, on the table or at reception. Works with NFC-enabled phones, no app needed."
-            }
-          },
-          {
-            title: { sq: "Hapet faqja e vlerësimeve", en: "Your review page opens" },
-            body: {
-              sq: "Faqja e vlerësimeve në Google e biznesit tuaj shfaqet menjëherë në telefon, pa e kërkuar.",
-              en: "Your business's Google review page appears instantly on their phone, with no searching."
-            }
-          },
-          {
-            title: { sq: "Vlerësimi lihet në sekonda", en: "The review takes seconds" },
-            body: {
-              sq: "Klienti zgjedh yjet dhe shkruan komentin. Më pak hapa do të thotë më shumë vlerësime.",
-              en: "The customer picks the stars and writes a comment. Fewer steps means more reviews."
-            }
-          }
+          { title: { sq: "Prek", en: "Tap" }, body: { sq: "Afro telefonin te produkti NFC.", en: "Hold your phone near the NFC product." } },
+          { title: { sq: "Hap", en: "Open" }, body: { sq: "Hapet faqja e vlerësimeve në Google.", en: "The Google review page opens." } },
+          { title: { sq: "Vlerëso", en: "Review" }, body: { sq: "Klienti lë vlerësimin e tij.", en: "The customer leaves their review." } }
         ]
       }
-    }
+    },
 
-    /* ---------------------------------------------------------------
-       EXAMPLE — a future physical-products category.
-       Copy, set status to "active" and fill in real items when ready.
-       ---------------------------------------------------------------
-    ,{
-      id: "personalized-products",
+    {
+      // Planned category — products, prices and specifications are not final yet.
+      // When real products are ready: set status to "active" and add items.
+      id: "qr-code-products",
       group: "physical",
-      status: "hidden",
-      index: "03",
-      name: { sq: "Produkte të Personalizuara", en: "Personalized Products" },
-      summary: { sq: "...", en: "..." },
-      showFromPrice: true,
-      items: [
-        {
-          id: "engraved-keychain",
-          name: { sq: "...", en: "..." },
-          price: 15,
-          priceSuffix: { sq: "/copë", en: "/piece" }, // optional
-          description: { sq: "...", en: "..." },
-          features: [ { sq: "...", en: "..." } ]       // optional bullet list
-        }
-      ]
+      status: "soon",
+      icon: "qr",
+      name: { sq: "Produkte QR Code", en: "QR Code Products" },
+      summary: {
+        sq: "Po përgatisim produkte të reja me QR Code. Së shpejti do të zbuloni më shumë.",
+        en: "We're preparing new QR Code products. You'll be able to discover more soon."
+      },
+      items: []
     }
-    --------------------------------------------------------------- */
-  ]
+  ],
+
+  // Order of the categories in the homepage hero card
+  heroOrder: ["web-development", "google-nfc-cards", "qr-code-products"]
 };
 
 /* Page names used in the "pages" lists above (bilingual labels). */
@@ -248,5 +225,6 @@ PREIZ.pageLabels = {
   gallery:  { sq: "Galeri",               en: "Gallery" },
   reviews:  { sq: "Vlerësime",            en: "Reviews" },
   faq:      { sq: "Pyetje të Shpeshta",   en: "FAQ" },
-  contact:  { sq: "Kontakt",              en: "Contact" }
+  contact:  { sq: "Kontakt",              en: "Contact" },
+  custom:   { sq: "Deri në një faqe shtesë të personalizuar", en: "Up to one additional custom page" }
 };

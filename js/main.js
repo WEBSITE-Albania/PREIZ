@@ -56,11 +56,14 @@
     return obj[P.lang] != null ? obj[P.lang] : obj[P.site.defaultLanguage];
   };
 
-  /** Format a price in euro. */
+  /** Format a number with the active language's thousands separator: 8.000 / 8,000 */
+  P.num = function (n) {
+    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, P.lang === "sq" ? "." : ",");
+  };
+
+  /** Format a price in Albanian lek: "8.000 lekë" (sq) / "8,000 lek" (en). */
   P.price = function (n) {
-    var rounded = Math.round(n * 100) / 100;
-    var str = rounded % 1 === 0 ? String(rounded) : rounded.toFixed(2);
-    return P.site.currency + str;
+    return P.num(n) + " " + P.t("common.currency");
   };
 
   /** Escape text for safe HTML insertion. */
@@ -157,16 +160,15 @@
           el.rel = "noopener";
         }
         if (showText && el.hasAttribute("data-contact-text")) el.textContent = c.phoneDisplay;
+      } else if (P.site.social && P.site.social[type]) {
+        var s = P.site.social[type];
+        if (el.tagName === "A") {
+          el.href = s.url;
+          el.target = "_blank";
+          el.rel = "noopener";
+        }
+        if (showText) el.textContent = s.handle;
       }
-    });
-
-    // Social links (only rendered when profiles exist in config.js)
-    document.querySelectorAll("[data-social]").forEach(function (el) {
-      if (!P.site.social || !P.site.social.length) { el.hidden = true; return; }
-      el.hidden = false;
-      el.innerHTML = P.site.social.map(function (s) {
-        return '<li><a href="' + P.esc(s.url) + '" target="_blank" rel="noopener">' + P.esc(s.name) + "</a></li>";
-      }).join("");
     });
   }
 

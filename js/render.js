@@ -3,8 +3,7 @@
    Builds the catalog, pricing and portfolio sections from catalog.js and
    projects.js. Any element with data-render="..." is filled automatically:
 
-     hero-index        → homepage hero catalog list
-     catalog-preview   → homepage Products & Services preview
+     hero-index        → homepage hero category list (blue card)
      category-index    → category links on the Products & Services page
      catalog           → full Products & Services page content
      projects          → portfolio cards (add data-featured to show only featured)
@@ -21,49 +20,36 @@
     external: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 4h9v9M16 4 5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     check: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     minus: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+    tag: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10.2V4.5a1 1 0 0 1 1-1h5.7l6.3 6.3a1 1 0 0 1 0 1.4l-5.3 5.3a1 1 0 0 1-1.4 0z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/></svg>',
+    /* category icons (outline, 20px grid) */
+    web: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="2.5" y="3.5" width="15" height="13" rx="1.5"/><path d="M2.5 7h15M5 5.25h.01M7 5.25h.01" stroke-linecap="round"/><path d="m8 10-1.8 1.8L8 13.6m4-3.6 1.8 1.8-1.8 1.8" stroke-linecap="round"/></svg>',
+    qr: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="3" y="3" width="5" height="5" rx=".8"/><rect x="12" y="3" width="5" height="5" rx=".8"/><rect x="3" y="12" width="5" height="5" rx=".8"/><path d="M12 12h2v2h-2zM15.5 15.5H17V17h-1.5zM12 16.5h1.5M16.5 12v1.5" stroke-linecap="round"/></svg>',
+    nfc: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="11" height="12" rx="1.5"/><path d="M14.8 6.2a4.5 4.5 0 0 1 0 6.4M16.9 4.1a7.5 7.5 0 0 1 0 10.6"/><path d="M5.5 13.5h5"/></svg>',
     lock: '<svg class="i" viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="9" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.5 9V7a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>'
   };
   P.icon = ICON;
 
   /* ---------------- Data helpers ---------------- */
-  function activeGroups() {
-    return P.catalog.groups.filter(function (g) { return g.status === "active"; });
+  function groupActive(cat) {
+    var g = P.catalog.groups.find(function (x) { return x.id === cat.group; });
+    return !!g && g.status === "active";
   }
-  function activeCategories(groupId) {
+  /* Categories shown to visitors: available ("active") and upcoming ("soon") */
+  function visibleCategories() {
     return P.catalog.categories.filter(function (c) {
-      if (c.status !== "active") return false;
-      var g = P.catalog.groups.find(function (x) { return x.id === c.group; });
-      if (!g || g.status !== "active") return false;
-      return groupId ? c.group === groupId : true;
+      return (c.status === "active" || c.status === "soon") && groupActive(c);
     });
   }
-  function groupOf(cat) {
-    return P.catalog.groups.find(function (g) { return g.id === cat.group; });
-  }
+  function isSoon(cat) { return cat.status === "soon"; }
   function hasPrice(item) { return typeof item.price === "number"; }
-  /* Item price as text: "€80", or "2,000 ALL" when the item has its own currency */
-  function groupThousands(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+  /* Item price as text, e.g. "1.500 lekë" (used in the prefilled WhatsApp message) */
   P.itemPrice = function (item, n) {
-    n = n == null ? item.price : n;
-    if (item.currency) return groupThousands(n) + " " + item.currency;
-    return P.price(n);
+    return P.price(n == null ? item.price : n);
   };
-  /* Same, as HTML with the currency code set smaller */
-  function priceMarkup(item) {
-    if (!item.currency) return esc(P.price(item.price));
-    return esc(groupThousands(item.price)) + ' <small class="cur">' + esc(item.currency) + '</small>';
-  }
-  function cheapest(cat) {
-    var priced = cat.items.filter(hasPrice);
-    if (!priced.length) return null;
-    return priced.reduce(function (a, b) { return b.price < a.price ? b : a; });
-  }
-  /* "5 packages", "1 package", "1 product"… (category.unit: "products") */
-  function countLabel(cat) {
-    var n = cat.items.length;
-    var key = cat.unit === "products" ? (n === 1 ? "common.product.one" : "common.products")
-                                      : (n === 1 ? "common.package.one" : "common.packages");
-    return P.t(key, { n: n });
+  /* Price as HTML with the currency set smaller: 8.000 <small>lekë</small> */
+  function priceMarkup(n) {
+    return esc(P.num(n)) + ' <small class="cur">' + esc(P.t("common.currency")) + '</small>';
   }
   P.findItem = function (id) {
     var found = null;
@@ -74,65 +60,37 @@
     return found;
   };
 
-  function pad(n) { return n < 10 ? "0" + n : String(n); }
   var esc = function (s) { return P.esc(s); };
-
-  /* ---------------- Hero index ---------------- */
-  function heroIndex(el) {
-    var cats = activeCategories();
-    var html = cats.map(function (c) {
-      return '<li><span class="hx-idx">' + esc(c.index) + '</span>' +
-        '<span class="hx-name"><small>' + esc(P.L(groupOf(c).name)) + '</small>' + esc(P.L(c.name)) + '</span>' +
-        '<span class="hx-status"><i class="dot" aria-hidden="true"></i>' + esc(P.t("common.available")) + '</span></li>';
-    }).join("");
-    html += '<li class="is-next"><span class="hx-idx">' + pad(cats.length + 1) + '</span>' +
-      '<span class="hx-name">' + esc(P.t("home.panel.next")) + '</span>' +
-      '<span class="hx-status">' + esc(P.t("home.panel.nextStatus")) + '</span></li>';
-    el.innerHTML = html;
+  function soonBadge() {
+    return '<span class="soon">' + esc(P.t("common.soon")) + '</span>';
   }
 
-  /* ---------------- Homepage catalog preview ---------------- */
-  function catalogPreview(el) {
-    el.innerHTML = activeCategories().map(function (c) {
-      var rows = c.items.map(function (item, i) {
-        var pages = item.pages ? P.t("common.pages", { n: item.pages.length }) : "";
-        return '<li class="row reveal" style="--d:' + (i * 50) + 'ms">' +
-          '<a href="services.html#' + esc(item.id) + '">' +
-            '<span class="row-idx">' + pad(i + 1) + '</span>' +
-            '<span class="row-main"><span class="row-name">' + esc(P.L(item.name)) +
-              (item.featured ? ' <span class="flag">' + esc(P.t("common.featured")) + '</span>' : "") +
-            '</span><span class="row-desc">' + esc(P.L(item.description)) + '</span></span>' +
-            '<span class="row-meta">' + esc(pages) + '</span>' +
-            (hasPrice(item)
-              ? '<span class="row-price' + (item.currency ? " has-cur" : "") + '">' + priceMarkup(item) + '</span>'
-              : '<span class="row-price is-quote">' + esc(P.t("common.onRequest")) + '</span>') +
-            '<span class="row-arrow">' + ICON.arrow + '</span>' +
-          '</a></li>';
-      }).join("");
-
-      return '<div class="cp">' +
-        '<div class="cp-head reveal">' +
-          '<span class="cp-idx">' + esc(c.index) + '</span>' +
-          '<div><p class="cp-group">' + esc(P.L(groupOf(c).name)) + '</p>' +
-          '<h3 class="cp-name">' + esc(P.L(c.name)) + '</h3></div>' +
-          '<p class="cp-summary">' + esc(P.L(c.summary)) + '</p>' +
-          '<p class="cp-from">' + esc(countLabel(c)) +
-            (c.showFromPrice && cheapest(c) ? ' · ' + esc(P.t("common.from")) + ' <strong>' + esc(P.itemPrice(cheapest(c))) + '</strong>' : "") + '</p>' +
-        '</div>' +
-        '<ol class="rows">' + rows + '</ol>' +
-      '</div>';
+  /* ---------------- Hero category card (home) ---------------- */
+  function heroIndex(el) {
+    var cats = visibleCategories();
+    var order = P.catalog.heroOrder || [];
+    cats.sort(function (a, b) {
+      var ia = order.indexOf(a.id), ib = order.indexOf(b.id);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    });
+    el.innerHTML = cats.map(function (c) {
+      return '<li' + (isSoon(c) ? ' class="is-soon"' : "") + '><a href="services.html#' + esc(c.id) + '">' +
+        '<span class="hx-name">' + esc(P.L(c.name)) + '</span>' +
+        (isSoon(c) ? soonBadge() : "") +
+        '<span class="hx-icon">' + (ICON[c.icon] || "") + '</span>' +
+      '</a></li>';
     }).join("");
-    P.observeReveal(el);
   }
 
   /* ---------------- Category index (services page) ---------------- */
   function categoryIndex(el) {
-    var links = activeCategories().map(function (c) {
-      return '<li><a href="#' + esc(c.id) + '"><span class="ci-idx">' + esc(c.index) + '</span>' +
-        '<span><small>' + esc(P.L(groupOf(c).name)) + '</small>' + esc(P.L(c.name)) + '</span>' +
-        '<span class="ci-count">' + esc(countLabel(c)) + '</span></a></li>';
+    el.innerHTML = visibleCategories().map(function (c) {
+      return '<li><a href="#' + esc(c.id) + '"' + (isSoon(c) ? ' class="is-soon"' : "") + '>' +
+        '<span class="ci-icon">' + (ICON[c.icon] || "") + '</span>' +
+        '<span class="ci-name">' + esc(P.L(c.name)) + '</span>' +
+        (isSoon(c) ? soonBadge() : "") +
+      '</a></li>';
     }).join("");
-    el.innerHTML = links + '<li class="ci-more">' + ICON.minus + '<span>' + esc(P.t("services.index.more")) + '</span></li>';
   }
 
   /* ---------------- Product visuals (physical products) ----------------
@@ -243,20 +201,25 @@
     }
   };
 
-  /* ---------------- Package card ---------------- */
+  /* ---------------- Package / product card ---------------- */
+  function listItem(icon, text, off) {
+    return '<li' + (off ? ' class="is-off"' : "") + '>' + icon + '<span>' + esc(text) + '</span>' +
+      (off ? '<span class="sr-only"> ' + esc(P.t("common.notIncluded")) + '</span>' : "") + '</li>';
+  }
+
   function packageCard(item, i, cat) {
     var includes = "";
-    if (item.pages && item.pages.length) {
-      includes = '<div class="pkg-inc"><p class="pkg-inc-label">' + esc(P.t("common.includes")) +
-        ' · ' + esc(P.t("common.pages", { n: item.pages.length })) + '</p><ul>' +
-        item.pages.map(function (p) {
-          return "<li>" + ICON.check + "<span>" + esc(P.L(P.pageLabels[p])) + "</span></li>";
+    if (item.areas && cat.compareAreas) {
+      // Basic / Premium: same rows on both cards → differences are visible at a glance
+      includes = '<div class="pkg-inc"><p class="pkg-inc-label">' + esc(P.t("common.contentAreas")) + '</p><ul>' +
+        cat.compareAreas.map(function (a) {
+          var on = item.areas.indexOf(a) > -1;
+          return listItem(on ? ICON.check : ICON.minus, P.L(P.pageLabels[a]), !on);
         }).join("") + "</ul></div>";
     } else if (item.features && item.features.length) {
-      includes = '<div class="pkg-inc"><p class="pkg-inc-label">' + esc(P.t("common.includes")) + '</p><ul>' +
-        item.features.map(function (f) {
-          return "<li>" + ICON.check + "<span>" + esc(P.L(f)) + "</span></li>";
-        }).join("") + "</ul></div>";
+      includes = '<div class="pkg-inc"><p class="pkg-inc-label">' +
+        esc(item.featuresLabel ? P.L(item.featuresLabel) : P.t("common.includes")) + '</p><ul>' +
+        item.features.map(function (f) { return listItem(ICON.check, P.L(f)); }).join("") + "</ul></div>";
     }
 
     var maint = item.maintenance != null
@@ -264,9 +227,10 @@
         esc(P.price(item.maintenance)) + '<small>' + esc(P.t("common.perYear")) + '</small></strong></div>'
       : "";
 
-    var suffix = item.priceSuffix ? P.L(item.priceSuffix) : P.t("common.oneTime");
+    // Unit suffix only where it adds meaning (e.g. "/copë"); website packages show the price alone
+    var suffix = item.priceSuffix ? '<span class="note">' + esc(P.L(item.priceSuffix)) + '</span>' : "";
     var priceHtml = hasPrice(item)
-      ? '<span class="amount">' + priceMarkup(item) + '</span><span class="note">' + esc(suffix) + '</span>'
+      ? '<span class="amount">' + priceMarkup(item.price) + '</span>' + suffix
       : '<span class="amount is-quote">' + esc(P.t("common.onRequest")) + '</span><span class="note">' + esc(P.t("common.onRequestNote")) + '</span>';
     var primary = item.featured || !!cat.showcase;
     var requestKey = cat.unit === "products" ? "common.requestProduct" : "common.request";
@@ -275,8 +239,6 @@
 
     return '<article class="pkg reveal' + (item.featured ? " is-featured" : "") + (visual ? " has-visual" : "") + '" id="' + esc(item.id) + '" style="--d:' + (i * 60) + 'ms">' +
       visual +
-      '<div class="pkg-top"><span class="pkg-idx">' + esc(cat.index) + "." + pad(i + 1) + '</span>' +
-        (item.featured ? '<span class="flag">' + esc(P.t("common.featured")) + '</span>' : "") + '</div>' +
       '<h3 class="pkg-name">' + esc(P.L(item.name)) + '</h3>' +
       '<p class="pkg-desc">' + esc(P.L(item.description)) + '</p>' +
       includes +
@@ -289,84 +251,49 @@
     '</article>';
   }
 
-  /* ---------------- Extras (language, domain, SEO) ---------------- */
+  /* ---------------- Additional information (language, domain, hosting, SEO) ---------------- */
   function extrasBlock(cat) {
     var x = cat.extras;
     if (!x) return "";
-    var blocks = [];
-
+    var rows = [];
+    function row(title, value, body, included) {
+      rows.push('<li class="info' + (included ? " is-inc" : "") + '">' +
+        '<p class="info-k"><span>' + esc(title) + '</span><strong>' + (included ? ICON.check : "") + esc(value) + '</strong></p>' +
+        '<p class="info-d">' + esc(body) + '</p></li>');
+    }
     if (x.additionalLanguagePercent) {
-      var ref = cat.items.find(function (i) { return i.id === "basic-website"; }) || cat.items[0];
-      var extra = ref.price * x.additionalLanguagePercent / 100;
-      blocks.push('<div class="xb reveal">' +
-        '<p class="xb-k">' + esc(P.t("pricing.lang.title")) + '</p>' +
-        '<p class="xb-v">' + esc(P.t("pricing.lang.value", { p: x.additionalLanguagePercent })) + '</p>' +
-        '<p class="xb-d">' + esc(P.t("pricing.lang.body", { p: x.additionalLanguagePercent })) + '</p>' +
-        '<p class="xb-ex">' + esc(P.t("pricing.lang.example", { name: P.L(ref.name), price: P.price(ref.price), extra: P.price(extra) })) + '</p>' +
-      '</div>');
+      row(P.t("pricing.lang.title"), P.t("pricing.lang.value", { p: x.additionalLanguagePercent }),
+        P.t("pricing.lang.body", { p: x.additionalLanguagePercent }));
     }
     if (x.domainFrom) {
-      blocks.push('<div class="xb reveal" style="--d:60ms">' +
-        '<p class="xb-k">' + esc(P.t("pricing.domain.title")) + '</p>' +
-        '<p class="xb-v">' + esc(P.t("pricing.domain.value", { price: P.price(x.domainFrom) })) + '</p>' +
-        '<p class="xb-d">' + esc(P.t("pricing.domain.body", { price: P.price(x.domainFrom) })) + '</p>' +
-      '</div>');
+      row(P.t("pricing.domain.title"), P.t("pricing.domain.value", { price: P.price(x.domainFrom) }), P.t("pricing.domain.body"));
     }
-    if (x.seoIncludedWithDomain) {
-      blocks.push('<div class="xb xb-inc reveal" style="--d:120ms">' +
-        '<p class="xb-k">' + esc(P.t("pricing.seo.title")) + '</p>' +
-        '<p class="xb-v">' + ICON.check + esc(P.t("pricing.seo.value")) + '</p>' +
-        '<p class="xb-d">' + esc(P.t("pricing.seo.body")) + '</p>' +
-      '</div>');
-    }
+    if (x.hostingIncluded) row(P.t("pricing.hosting.title"), P.t("common.included"), P.t("pricing.hosting.body"), true);
+    if (x.seoIncluded) row(P.t("pricing.seo.title"), P.t("common.included"), P.t("pricing.seo.body"), true);
 
     return '<div class="extras" id="pricing">' +
-      '<div class="sub-head reveal"><p class="label">' + esc(P.t("pricing.label")) + '</p>' +
-      '<h3 class="h3">' + esc(P.t("pricing.title")) + '</h3></div>' +
-      '<div class="xb-grid">' + blocks.join("") + '</div></div>';
+      '<div class="sub-head reveal"><h3 class="h3">' + esc(P.t("pricing.title")) + '</h3></div>' +
+      '<ul class="info-grid reveal">' + rows.join("") + '</ul></div>';
   }
 
-  /* ---------------- Maintenance ---------------- */
+  /* ---------------- Annual maintenance (included / not included) ---------------- */
   function maintenanceBlock(cat) {
-    var items = cat.items.filter(function (i) { return i.maintenance != null; });
-    if (!items.length) return "";
-
-    var rows = items.map(function (i) {
-      return '<tr><th scope="row">' + esc(P.L(i.name)) + '</th>' +
-        '<td>' + esc(P.price(i.price)) + '</td>' +
-        '<td><strong>' + esc(P.price(i.maintenance)) + '</strong><span>' + esc(P.t("common.perYear")) + '</span></td></tr>';
-    }).join("");
-
-    var excl = (cat.maintenanceExclusions || []).map(function (k) {
-      return "<li>" + ICON.minus + "<span>" + esc(P.t(k)) + "</span></li>";
-    }).join("");
-
+    if (!cat.maintenanceIncludes) return "";
+    function list(keys, icon, off) {
+      return '<ul>' + keys.map(function (k) { return listItem(icon, P.t(k), off); }).join("") + '</ul>';
+    }
     return '<div class="maint" id="maintenance">' +
-      '<div class="sub-head reveal"><p class="label">' + esc(P.t("maint.label")) + '</p>' +
-      '<h3 class="h3">' + esc(P.t("maint.title")) + '</h3></div>' +
-
-      '<div class="mx">' +
-        '<div class="mx-card reveal"><span class="tag">' + esc(P.t("maint.dev.tag")) + '</span>' +
-          '<h4>' + esc(P.t("maint.dev.title")) + '</h4><p>' + esc(P.t("maint.dev.body")) + '</p></div>' +
-        '<div class="mx-plus" aria-hidden="true">+</div>' +
-        '<div class="mx-card mx-card-alt reveal" style="--d:80ms"><span class="tag">' + esc(P.t("maint.care.tag")) + '</span>' +
-          '<h4>' + esc(P.t("maint.care.title")) + '</h4><p>' + esc(P.t("maint.care.body")) + '</p></div>' +
+      '<div class="sub-head reveal"><h3 class="h3">' + esc(P.t("maint.title")) + '</h3>' +
+      '<p class="sub-lead">' + esc(P.t("maint.intro")) + '</p></div>' +
+      '<div class="scope reveal">' +
+        '<div class="scope-col"><h4>' + esc(P.t("maint.inc.title")) + '</h4>' + list(cat.maintenanceIncludes, ICON.check) + '</div>' +
+        '<div class="scope-col is-out"><h4>' + esc(P.t("maint.exc.title")) + '</h4>' + list(cat.maintenanceExclusions || [], ICON.minus) + '</div>' +
       '</div>' +
-
-      '<div class="mt-wrap">' +
-        '<div class="mt reveal"><table>' +
-          '<caption class="sr-only">' + esc(P.t("maint.label")) + '</caption>' +
-          '<thead><tr><th scope="col">' + esc(P.t("maint.table.package")) + '</th><th scope="col">' + esc(P.t("maint.table.dev")) +
-          '</th><th scope="col">' + esc(P.t("maint.table.annual")) + '</th></tr></thead>' +
-          '<tbody>' + rows + '</tbody></table>' +
-          '<p class="mt-note">' + esc(P.t("maint.note")) + '</p></div>' +
-        '<div class="excl reveal" style="--d:80ms"><h4>' + esc(P.t("maint.excl.title")) + '</h4><ul>' + excl + '</ul>' +
-          '<p class="excl-note">' + esc(P.t("maint.excl.note")) + '</p></div>' +
-      '</div>' +
+      '<p class="scope-note reveal">' + esc(P.t("maint.note")) + '</p>' +
     '</div>';
   }
 
-  /* ---------------- Showcase (product visual + how it works) ---------------- */
+  /* ---------------- Showcase (products + bulk notice + how it works) ---------------- */
   var STEP_ICON = [
     // tap
     '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="4" width="14" height="24" rx="2.5"/><path d="M14 24.5h4"/><path d="M4.5 12a6 6 0 0 1 0 8M1.8 9.5a10 10 0 0 1 0 13"/></svg>',
@@ -375,51 +302,105 @@
     // star
     '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="m16 4.5 3.4 7.2 7.8 1-5.7 5.4 1.4 7.8L16 22.1l-6.9 3.8 1.4-7.8-5.7-5.4 7.8-1z"/></svg>'
   ];
+  function bulkBlock(cat) {
+    var stand = cat.items.find(function (i) { return i.visual === "stand"; });
+    var card = cat.items.find(function (i) { return i.visual === "card"; });
+    if (!cat.bulkAbove || !stand || !card || !stand.bulkPrice || !card.bulkPrice) return "";
+    return '<div class="bulk reveal">' +
+      '<span class="bulk-icon">' + ICON.tag + '</span>' +
+      '<div><h3 class="bulk-t">' + esc(P.t("nfc.bulk.title", { n: cat.bulkAbove })) + '</h3>' +
+      '<p>' + esc(P.t("nfc.bulk.body", { n: cat.bulkAbove, stand: P.price(stand.bulkPrice), card: P.price(card.bulkPrice) })) + '</p></div>' +
+    '</div>';
+  }
+
   function showcaseBlock(cat) {
     var sc = cat.showcase;
     var top = '<div class="product-grid count-' + cat.items.length + '">' +
       cat.items.map(function (item, i) { return packageCard(item, i, cat); }).join("") +
-    '</div>';
+    '</div>' + bulkBlock(cat);
 
     var steps = "";
     if (sc.steps && sc.steps.length) {
       steps = '<div class="steps-block" id="' + esc(cat.id) + '-how">' +
-        '<div class="sub-head reveal"><p class="label">' + esc(P.L(sc.label)) + '</p>' +
-        '<h3 class="h3">' + esc(P.L(sc.title)) + '</h3></div>' +
-        '<ol class="xb-grid">' + sc.steps.map(function (st, i) {
-          return '<li class="xb step reveal" style="--d:' + (i * 60) + 'ms">' +
-            '<p class="xb-k step-k"><span>' + pad(i + 1) + '</span>' + (STEP_ICON[i] || "") + '</p>' +
-            '<h4 class="step-t">' + esc(P.L(st.title)) + '</h4>' +
-            '<p class="xb-d">' + esc(P.L(st.body)) + '</p>' +
+        '<div class="sub-head reveal"><h3 class="h3">' + esc(P.L(sc.title)) + '</h3></div>' +
+        '<ol class="flow reveal">' + sc.steps.map(function (st, i) {
+          return '<li class="flow-step">' +
+            '<span class="flow-icon">' + (STEP_ICON[i] || "") + '</span>' +
+            '<h4 class="flow-t">' + esc(P.L(st.title)) + '</h4>' +
+            '<p class="flow-d">' + esc(P.L(st.body)) + '</p>' +
           '</li>';
         }).join("") + '</ol></div>';
     }
     return top + steps;
   }
 
+  /* ---------------- Coming Soon category (no items, prices or order buttons) ---------------- */
+
+  /* A QR code "being assembled": three finder squares, data modules that thin
+     out towards the lower right, and one accent module. Static and decorative;
+     the same pattern every time (seeded). */
+  function qrMotif() {
+    var n = 21, c = 6, seed = 11, out = "";
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function inFinder(x, y) { return (x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12); }
+    function finder(x, y) {
+      return '<rect class="qm-ring" x="' + (x * c + 0.75) + '" y="' + (y * c + 0.75) + '" width="' + (7 * c - 1.5) + '" height="' + (7 * c - 1.5) + '" rx="1.5"/>' +
+        '<rect class="qm-on" x="' + ((x + 2) * c) + '" y="' + ((y + 2) * c) + '" width="' + (3 * c) + '" height="' + (3 * c) + '" rx="1"/>';
+    }
+    for (var y = 0; y < n; y++) {
+      for (var x = 0; x < n; x++) {
+        if (inFinder(x, y)) continue;
+        var r = rnd(), fill = 0.62 - (x + y) / 52;   // denser top-left → sparse bottom-right
+        var px = x * c + 0.8, py = y * c + 0.8, s = c - 1.6;
+        if (r < fill) out += '<rect class="qm-on" x="' + px + '" y="' + py + '" width="' + s + '" height="' + s + '" rx=".6"/>';
+        else if (r < fill + 0.16) out += '<rect class="qm-off" x="' + px + '" y="' + py + '" width="' + s + '" height="' + s + '" rx=".6"/>';
+      }
+    }
+    out += '<rect class="qm-accent" x="' + (18 * c + 0.8) + '" y="' + (18 * c + 0.8) + '" width="' + (c - 1.6) + '" height="' + (c - 1.6) + '" rx=".6"/>';
+    return '<svg class="qm" viewBox="0 0 ' + n * c + ' ' + n * c + '" aria-hidden="true">' +
+      finder(0, 0) + finder(14, 0) + finder(0, 14) + out + '</svg>';
+  }
+
+  function soonCategory(c) {
+    // "Coming Soon" → "Coming <em>Soon</em>" (last word in the accent colour)
+    var words = P.t("common.soon").split(" ");
+    var last = words.pop();
+    var word = (words.length ? esc(words.join(" ")) + " " : "") + "<em>" + esc(last) + "</em>";
+
+    return '<section class="category category-soon" id="' + esc(c.id) + '" aria-labelledby="cat-' + esc(c.id) + '">' +
+      '<div class="container">' +
+        '<header class="category-head reveal">' +
+          '<h2 class="h2" id="cat-' + esc(c.id) + '">' + esc(P.L(c.name)) + '</h2>' +
+        '</header>' +
+        '<div class="soon-band reveal">' +
+          '<div class="soon-motif">' + qrMotif() + '</div>' +
+          '<div class="soon-copy">' +
+            '<p class="soon-word">' + word + '</p>' +
+            '<p class="soon-text">' + esc(P.L(c.summary)) + '</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</section>';
+  }
+
   /* ---------------- Full catalog (services page) ---------------- */
   function catalog(el) {
-    el.innerHTML = activeGroups().map(function (g) {
-      var cats = activeCategories(g.id);
-      if (!cats.length) return "";
-      return cats.map(function (c) {
-        return '<section class="category" id="' + esc(c.id) + '" aria-labelledby="cat-' + esc(c.id) + '">' +
-          '<div class="container">' +
-            '<header class="category-head reveal">' +
-              '<span class="cat-idx">' + esc(c.index) + '</span>' +
-              '<div><p class="label">' + esc(P.L(g.name)) + '</p>' +
-              '<h2 class="h2" id="cat-' + esc(c.id) + '">' + esc(P.L(c.name)) + '</h2></div>' +
-              '<p class="lead">' + esc(P.L(c.summary)) + '</p>' +
-            '</header>' +
-            (c.showcase ? showcaseBlock(c) :
-            '<div class="pkg-grid count-' + c.items.length + '">' +
-              c.items.map(function (item, i) { return packageCard(item, i, c); }).join("") +
-            '</div>') +
-            extrasBlock(c) +
-            maintenanceBlock(c) +
-          '</div>' +
-        '</section>';
-      }).join("");
+    el.innerHTML = visibleCategories().map(function (c) {
+      if (isSoon(c)) return soonCategory(c);
+      return '<section class="category" id="' + esc(c.id) + '" aria-labelledby="cat-' + esc(c.id) + '">' +
+        '<div class="container">' +
+          '<header class="category-head reveal">' +
+            '<h2 class="h2" id="cat-' + esc(c.id) + '">' + esc(P.L(c.name)) + '</h2>' +
+            '<p class="lead">' + esc(P.L(c.summary)) + '</p>' +
+          '</header>' +
+          (c.showcase ? showcaseBlock(c) :
+          '<div class="pkg-grid count-' + c.items.length + '">' +
+            c.items.map(function (item, i) { return packageCard(item, i, c); }).join("") +
+          '</div>') +
+          extrasBlock(c) +
+          maintenanceBlock(c) +
+        '</div>' +
+      '</section>';
     }).join("");
     P.observeReveal(el);
   }
@@ -555,7 +536,6 @@
   /* ---------------- Registration ---------------- */
   var MAP = {
     "hero-index": heroIndex,
-    "catalog-preview": catalogPreview,
     "category-index": categoryIndex,
     "catalog": catalog,
     "projects": projects

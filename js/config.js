@@ -23,14 +23,16 @@ PREIZ.site = {
     location: { sq: "Shqipëri · Operojmë online", en: "Albania · Operating online" }
   },
 
-  /* Social profiles — leave the list empty until real profiles exist.
-     Example entry:
-     { name: "Instagram", url: "https://instagram.com/preizco" }
-     Profiles added here appear automatically in the footer. */
-  social: [],
+  /* Social profiles. Elements with data-contact="instagram" / "tiktok"
+     get their link (and handle text) from here. */
+  social: {
+    instagram: { handle: "preiz_company", url: "https://www.instagram.com/preiz_company/" },
+    tiktok: { handle: "preiz954", url: "https://www.tiktok.com/@preiz954" }
+  },
 
   defaultLanguage: "sq",
   languages: ["sq", "en"],
 
-  currency: "€"
+  // All prices are in Albanian lek (shown as "8.000 lekë" / "8,000 lek")
+  currency: "ALL"
 };
