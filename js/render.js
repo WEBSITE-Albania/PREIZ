@@ -190,11 +190,20 @@
     '</div>';
   }
 
+  /* Real product photograph (shown whole, never cropped) */
+  function productPhoto(item, kind) {
+    return '<figure class="pv pv-photo pv-' + kind + '">' +
+      '<img src="' + esc(encodeURI(item.photo)) + '" alt="' + esc(P.t("nfc.pv.alt." + kind)) + '" width="500" height="500" loading="lazy" decoding="async">' +
+    '</figure>';
+  }
+
   var PRODUCT_VISUALS = {
     stand: function (item) {
+      if (item.photo) return productPhoto(item, "stand");
       return productVisual(item, "stand", standObj(true, 34, -30, 0) + standObj(false, -28, 12, 0));
     },
     card: function (item) {
+      if (item.photo) return productPhoto(item, "card");
       return productVisual(item, "card",
         '<div class="cd-floor"></div>' +
         cardObj(true, 22, -30, -26, -6, 7) + cardObj(false, -18, -22, 14, 10, -6));
@@ -229,7 +238,12 @@
 
     // Unit suffix only where it adds meaning (e.g. "/copë"); website packages show the price alone
     var suffix = item.priceSuffix ? '<span class="note">' + esc(P.L(item.priceSuffix)) + '</span>' : "";
-    var priceHtml = hasPrice(item)
+    // December offer: original price with a diagonal strike-through, offer price in festive red
+    var offer = hasPrice(item) && P.festive && P.festive.priceOf(item) !== item.price;
+    var priceHtml = offer
+      ? '<span class="was"><del><span class="sr-only">' + esc(P.t("fx.price.regular")) + ' </span>' + priceMarkup(item.price) + '</del></span>' +
+        '<span class="amount is-offer"><span class="sr-only">' + esc(P.t("fx.price.offer")) + ' </span>' + priceMarkup(P.festive.priceOf(item)) + '</span>' + suffix
+      : hasPrice(item)
       ? '<span class="amount">' + priceMarkup(item.price) + '</span>' + suffix
       : '<span class="amount is-quote">' + esc(P.t("common.onRequest")) + '</span><span class="note">' + esc(P.t("common.onRequestNote")) + '</span>';
     var primary = item.featured || !!cat.showcase;
@@ -243,7 +257,7 @@
       '<p class="pkg-desc">' + esc(P.L(item.description)) + '</p>' +
       includes +
       '<div class="pkg-foot">' +
-        '<div class="pkg-price">' + priceHtml + '</div>' +
+        '<div class="pkg-price' + (offer ? " has-offer" : "") + '">' + priceHtml + '</div>' +
         maint +
         '<a class="btn ' + (primary ? "btn-primary" : "btn-outline") + ' btn-block" href="contact.html?package=' + encodeURIComponent(item.id) + '">' +
           '<span>' + esc(P.t(requestKey)) + '</span>' + ICON.arrow + '</a>' +
@@ -309,7 +323,9 @@
     return '<div class="bulk reveal">' +
       '<span class="bulk-icon">' + ICON.tag + '</span>' +
       '<div><h3 class="bulk-t">' + esc(P.t("nfc.bulk.title", { n: cat.bulkAbove })) + '</h3>' +
-      '<p>' + esc(P.t("nfc.bulk.body", { n: cat.bulkAbove, stand: P.price(stand.bulkPrice), card: P.price(card.bulkPrice) })) + '</p></div>' +
+      '<p>' + esc(P.t("nfc.bulk.body", { n: cat.bulkAbove, stand: "\u0001", card: "\u0002" }))
+        .replace("\u0001", '<span class="price-hl">' + esc(P.price(stand.bulkPrice)) + '</span>')
+        .replace("\u0002", '<span class="price-hl">' + esc(P.price(card.bulkPrice)) + '</span>') + '</p></div>' +
     '</div>';
   }
 
@@ -383,6 +399,12 @@
     '</section>';
   }
 
+  /* ---------------- December offer note (under the website packages) ---------------- */
+  function offerNote(cat) {
+    var any = P.festive && cat.items.some(function (i) { return hasPrice(i) && P.festive.priceOf(i) !== i.price; });
+    return any ? '<p class="fx-offer-note reveal">' + esc(P.t("fx.offer.note")) + '</p>' : "";
+  }
+
   /* ---------------- Full catalog (services page) ---------------- */
   function catalog(el) {
     el.innerHTML = visibleCategories().map(function (c) {
@@ -396,7 +418,7 @@
           (c.showcase ? showcaseBlock(c) :
           '<div class="pkg-grid count-' + c.items.length + '">' +
             c.items.map(function (item, i) { return packageCard(item, i, c); }).join("") +
-          '</div>') +
+          '</div>' + offerNote(c)) +
           extrasBlock(c) +
           maintenanceBlock(c) +
         '</div>' +

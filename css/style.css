@@ -785,16 +785,6 @@ p { text-wrap: pretty; }
   border-top: 1px solid var(--line-dark);
   font-size: 13.5px;
 }
-.to-top {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--on-dark-muted);
-  font-size: 13.5px;
-  transition: color 0.2s;
-}
-.to-top:hover { color: var(--white); }
-.to-top .i { transform: rotate(-90deg); width: 16px; height: 16px; }
 
 /* ---------------- About ---------------- */
 .split {
@@ -1152,6 +1142,26 @@ p { text-wrap: pretty; }
   .pv-top span:last-child { display: none; }
   .pv-swatches { left: 18px; bottom: 14px; }
 }
+
+/* Real product photograph: same frame as the illustration, photo shown whole */
+.pv.pv-photo {
+  display: grid;
+  place-items: center;
+  background: var(--paper);      /* the website background: transparent photos sit directly on it */
+  container-type: normal;
+}
+.pv.pv-photo::before, .pv.pv-photo::after { content: none; }
+.pv-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* the photos have transparent margins: enlarge slightly (only empty space is
+     trimmed, never the product) and centre the card, which sits high in its file */
+  transform: scale(1.1);
+}
+.pv-photo.pv-card img { transform: translateY(5%) scale(1.1); }
 
 .pv-scene {
   position: absolute;

@@ -22,7 +22,7 @@ PREIZ.i18n = {
     "meta.about.title": "Rreth Nesh — PREIZ Co.",
     "meta.about.desc": "Njihuni me PREIZ Co.: një kompani e re shqiptare që krijon produkte dhe shërbime praktike, moderne dhe të aksesueshme.",
     "meta.services.title": "Produkte & Shërbime — PREIZ Co.",
-    "meta.services.desc": "Paketa website-sh nga 8.000 lekë, karta Google NFC dhe mirëmbajtje vjetore nga PREIZ Co. Çmime të qarta, në lekë.",
+    "meta.services.desc": "Paketa website-sh nga 6.000 lekë, karta Google NFC dhe mirëmbajtje vjetore nga PREIZ Co. Çmime të qarta, në lekë.",
     "meta.work.title": "Punët Tona — PREIZ Co.",
     "meta.work.desc": "Projekte reale të realizuara nga PREIZ Co.: website-e dhe menu dixhitale që janë aktive online.",
     "meta.contact.title": "Kontakt — PREIZ Co.",
@@ -156,8 +156,8 @@ PREIZ.i18n = {
     "maint.note": "Punët jashtë mirëmbajtjes mund të ofertohen veçmas.",
 
 
-    "nfc.pv.alt.stand": "Stenda e tavolinës NFC për Google, në të bardhë dhe në të zezë: një panel në formë L-je me simbolin NFC, pesë yje dhe mbishkrimin “Review us on Google”.",
-    "nfc.pv.alt.card": "Karta NFC për Google, në të bardhë dhe në të zezë: me simbolin NFC, pesë yje dhe mbishkrimin “Review us on Google”.",
+    "nfc.pv.alt.stand": "Fotografi e stendave të tavolinës Google NFC, një e bardhë dhe një e zezë: panele në formë L-je me simbolin NFC, logon e Google, pesë yje dhe mbishkrimin “Review us on Google”, me përmasat 127.5 × 76 mm dhe bazë 50 mm.",
+    "nfc.pv.alt.card": "Fotografi e kartave Google NFC, një e bardhë dhe një e zezë, me simbolin NFC, logon e Google, pesë yje dhe mbishkrimin “Review us on Google”, në përmasat 5.4 × 8.6 cm.",
     "nfc.pv.colors": "E bardhë · E zezë",
     "nfc.bulk.title": "Zbritje për porosi mbi {n} copë",
     "nfc.bulk.body": "Për porosi mbi {n} copë, çmimi i stendës NFC është {stand}/copë, ndërsa çmimi i kartës NFC është {card}/copë.",
@@ -190,7 +190,7 @@ PREIZ.i18n = {
     "contact.form.namePrefix": "Emri",
     "contact.form.packageMsg": "Përshëndetje PREIZ Co., më intereson paketa {name} ({price}). ",
     "contact.form.productMsg": "Përshëndetje PREIZ Co., më intereson produkti {name}{price}. ",
-    "contact.methods.title": "Mënyra të tjera kontakti",
+    "contact.methods.title": "Na kontaktoni",
     "contact.wa.title": "WhatsApp / Telefon",
     "contact.wa.cta": "Hap WhatsApp",
     "contact.phone.title": "Telefon",
@@ -202,13 +202,34 @@ PREIZ.i18n = {
     "footer.about": "PREIZ Co. krijon zgjidhje dixhitale dhe produkte inovative, duke ndërthurur kreativitetin, teknologjinë dhe funksionalitetin. Operojmë online nga Shqipëria.",
     "footer.nav": "Navigimi",
     "footer.contact": "Kontakt",
-    "footer.rights": "© 2026 PREIZ Co. - Të gjitha të drejtat e rezervuara",
-    "footer.top": "Kthehu lart",
+    "footer.rights": "© 2026 PREIZ Co. · Të drejtat e rezervuara",
 
     /* ---- 404 ---- */
     "nf.title": "Kjo faqe nuk ekziston.",
     "nf.body": "Lidhja mund të jetë e pasaktë ose faqja është zhvendosur.",
-    "nf.back": "Kthehu në kryefaqe"
+    "nf.back": "Kthehu në kryefaqe",
+
+    /* ---- Festive campaign (Christmas / New Year 2026–2027) ---- */
+    "fx.bar.caption": "Gëzuar Festat! Numërimi drejt vitit 2027",
+    "fx.bar.captionShort": "Numërimi drejt 2027",
+    "fx.bar.ended": "Gëzuar Vitin e Ri 2027!",
+    "fx.bar.label": "Numërimi deri në Vitin e Ri 2027",
+    "fx.bar.sr": "{d} ditë, {h} orë dhe {m} minuta deri në Vitin e Ri 2027",
+    "fx.bar.days": "Ditë",
+    "fx.bar.hours": "Orë",
+    "fx.bar.minutes": "Min",
+    "fx.bar.seconds": "Sek",
+    "fx.bar.link": "Ofertat e dhjetorit",
+    "fx.promo.label": "Oferta festive e dhjetorit",
+    "fx.promo.eyebrow": "Ofertë festive · Dhjetor 2026",
+    "fx.promo.title": "Festat sjellin oferta. Ne sjellim <em>zgjidhje</em>.",
+    "fx.promo.lead": "Zbuloni çmimet speciale të dhjetorit për website-in e biznesit tuaj",
+    "fx.promo.cta": "Shiko ofertat",
+    "fx.offer.note": "Çmimet festive vlejnë për porositë e konfirmuara gjatë dhjetorit 2026.",
+    "fx.price.regular": "Çmimi i rregullt:",
+    "fx.price.offer": "Çmimi festiv:",
+    "fx.form.packageMsg": "Përshëndetje PREIZ Co., më intereson paketa {name} me çmimin festiv të dhjetorit ({price}). ",
+    "fx.footer.greeting": "Ju urojmë festa të gëzuara dhe një vit 2027 plot suksese!"
   },
 
   /* ===================================================================== */
@@ -218,7 +239,7 @@ PREIZ.i18n = {
     "meta.about.title": "About Us — PREIZ Co.",
     "meta.about.desc": "Meet PREIZ Co.: a new Albanian company creating practical, modern and accessible products and services.",
     "meta.services.title": "Products & Services — PREIZ Co.",
-    "meta.services.desc": "Website packages from 8,000 lek, Google NFC cards and annual maintenance from PREIZ Co. Clear prices, in Albanian lek.",
+    "meta.services.desc": "Website packages from 6,000 lek, Google NFC cards and annual maintenance from PREIZ Co. Clear prices, in Albanian lek.",
     "meta.work.title": "Our Work — PREIZ Co.",
     "meta.work.desc": "Real projects delivered by PREIZ Co.: websites and digital menus that are live online.",
     "meta.contact.title": "Contact — PREIZ Co.",
@@ -342,8 +363,8 @@ PREIZ.i18n = {
     "maint.note": "Work outside the maintenance scope can be quoted separately.",
 
 
-    "nfc.pv.alt.stand": "The Google NFC table stand in white and black: an L-shaped panel with the NFC symbol, five stars and the words “Review us on Google”.",
-    "nfc.pv.alt.card": "The Google NFC card in white and black, with the NFC symbol, five stars and the words “Review us on Google”.",
+    "nfc.pv.alt.stand": "Photo of the Google NFC table stands, one white and one black: L-shaped panels with the NFC symbol, the Google logo, five stars and the words “Review us on Google”, measuring 127.5 × 76 mm with a 50 mm base.",
+    "nfc.pv.alt.card": "Photo of the Google NFC cards, one white and one black, with the NFC symbol, the Google logo, five stars and the words “Review us on Google”, measuring 5.4 × 8.6 cm.",
     "nfc.pv.colors": "White · Black",
     "nfc.bulk.title": "Discount for orders over {n} pieces",
     "nfc.bulk.body": "For orders over {n} pieces, the NFC stand costs {stand}/piece and the NFC card costs {card}/piece.",
@@ -374,7 +395,7 @@ PREIZ.i18n = {
     "contact.form.namePrefix": "Name",
     "contact.form.packageMsg": "Hello PREIZ Co., I'm interested in the {name} package ({price}). ",
     "contact.form.productMsg": "Hello PREIZ Co., I'm interested in the {name}{price}. ",
-    "contact.methods.title": "Other ways to reach us",
+    "contact.methods.title": "Contact us",
     "contact.wa.title": "WhatsApp / Phone",
     "contact.wa.cta": "Open WhatsApp",
     "contact.phone.title": "Phone",
@@ -385,11 +406,31 @@ PREIZ.i18n = {
     "footer.about": "PREIZ Co. creates digital solutions and innovative products, combining creativity, technology and functionality. We operate online from Albania.",
     "footer.nav": "Navigation",
     "footer.contact": "Contact",
-    "footer.rights": "© 2026 PREIZ Co. - All rights reserved",
-    "footer.top": "Back to top",
+    "footer.rights": "© 2026 PREIZ Co. · All rights reserved",
 
     "nf.title": "This page doesn't exist.",
     "nf.body": "The link may be incorrect, or the page has moved.",
-    "nf.back": "Back to home"
+    "nf.back": "Back to home",
+
+    "fx.bar.caption": "Happy Holidays! Counting down to 2027",
+    "fx.bar.captionShort": "Counting down to 2027",
+    "fx.bar.ended": "Happy New Year 2027!",
+    "fx.bar.label": "Countdown to New Year 2027",
+    "fx.bar.sr": "{d} days, {h} hours and {m} minutes until New Year 2027",
+    "fx.bar.days": "Days",
+    "fx.bar.hours": "Hours",
+    "fx.bar.minutes": "Min",
+    "fx.bar.seconds": "Sec",
+    "fx.bar.link": "December offers",
+    "fx.promo.label": "December festive offer",
+    "fx.promo.eyebrow": "Festive offer · December 2026",
+    "fx.promo.title": "The holidays bring offers. We bring <em>solutions</em>.",
+    "fx.promo.lead": "Discover our special December prices for your business website",
+    "fx.promo.cta": "View the offers",
+    "fx.offer.note": "Festive prices apply to orders confirmed during December 2026.",
+    "fx.price.regular": "Regular price:",
+    "fx.price.offer": "Festive price:",
+    "fx.form.packageMsg": "Hello PREIZ Co., I'm interested in the {name} package at the December festive price ({price}). ",
+    "fx.footer.greeting": "Wishing you happy holidays and a successful 2027!"
   }
 };

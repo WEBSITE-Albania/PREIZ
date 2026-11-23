@@ -57,6 +57,7 @@ PREIZ.catalog = {
           id: "digital-portfolio",
           name: { sq: "Portofol Dixhital", en: "Digital Portfolio" },
           price: 8000,
+          festivePrice: 6000,   // December 2026 offer (shown until 1 Jan 2027, 00:00 Tirana)
           maintenance: 3500,
           description: {
             sq: "Një prezantim dixhital i thjeshtë dhe i strukturuar në një faqe të vetme, për individë ose biznese që kanë nevojë për një profil të përmbledhur online.",
@@ -74,6 +75,7 @@ PREIZ.catalog = {
           id: "digital-menu",
           name: { sq: "Menu Dixhitale", en: "Digital Menu" },
           price: 10000,
+          festivePrice: 8000,   // December 2026 offer (shown until 1 Jan 2027, 00:00 Tirana)
           maintenance: 4000,
           description: {
             sq: "Një menu online me kategori të organizuara produktesh, pa kufi në numrin e produkteve apo të kategorive.",
@@ -92,6 +94,7 @@ PREIZ.catalog = {
           id: "basic-website",
           name: { sq: "Basic Website", en: "Basic Website" },
           price: 18000,
+          festivePrice: 15000,   // December 2026 offer (shown until 1 Jan 2027, 00:00 Tirana)
           maintenance: 5000,
           description: {
             sq: "Një website për të prezantuar biznesin, produktet dhe të dhënat tuaja të kontaktit.",
@@ -103,6 +106,7 @@ PREIZ.catalog = {
           id: "premium-website",
           name: { sq: "Premium Website", en: "Premium Website" },
           price: 25000,
+          festivePrice: 20000,   // December 2026 offer (shown until 1 Jan 2027, 00:00 Tirana)
           maintenance: 6000,
           featured: true, // receives subtle visual emphasis
           description: {
@@ -151,7 +155,8 @@ PREIZ.catalog = {
           price: 1500,
           bulkPrice: 1200,
           priceSuffix: { sq: "/copë", en: "/piece" },
-          visual: "stand",                       // product mockup drawn in render.js
+          visual: "stand",                       // product mockup drawn in render.js (used only without a photo)
+          photo: "images/nfc-tablestand-transparent.png",   // real product photo, transparent background
           dims: { sq: "76 × 127.5 mm · bazë 50 mm", en: "76 × 127.5 mm · 50 mm base" },
           description: {
             sq: "Një stendë në formë L-je që qëndron vetë mbi tavolinë, banak ose recepsion. Klientët e shohin menjëherë dhe e prekin me telefon për t'ju vlerësuar në Google.",
@@ -172,6 +177,7 @@ PREIZ.catalog = {
           bulkPrice: 800,
           priceSuffix: { sq: "/copë", en: "/piece" },
           visual: "card",
+          photo: "images/nfc-card-transparent.png",         // real product photo, transparent background
           dims: { sq: "54 × 86 mm", en: "54 × 86 mm" },
           description: {
             sq: "Një kartë në madhësinë e një karte bankare, e lehtë për t'u mbajtur, për t'ua dhënë klientëve ose për ta vendosur kudo. Një prekje me telefon hap faqen tuaj të vlerësimeve në Google.",
@@ -226,5 +232,5 @@ PREIZ.pageLabels = {
   reviews:  { sq: "Vlerësime",            en: "Reviews" },
   faq:      { sq: "Pyetje të Shpeshta",   en: "FAQ" },
   contact:  { sq: "Kontakt",              en: "Contact" },
-  custom:   { sq: "Deri në një faqe shtesë të personalizuar", en: "Up to one additional custom page" }
+  custom:   { sq: "1 faqe shtesë e personalizuar sipas nevojës", en: "1 additional custom page if needed" }
 };

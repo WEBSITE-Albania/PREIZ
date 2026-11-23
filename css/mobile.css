@@ -1,0 +1,246 @@
+/* =========================================================================
+   PREIZ Co. — MOBILE TYPOGRAPHY & SPACING SYSTEM (≤ 640px)
+   -------------------------------------------------------------------------
+   One shared scale for phones, so the same kind of element looks the same on
+   every page. Loaded last (after festive.css); desktop and tablet are unchanged.
+   Adjust the variables below to tune the whole mobile site at once.
+   ========================================================================= */
+
+/* Layout fix at every narrow width: the single hero column may never grow
+   wider than the screen (it could with long words in the brand panel). */
+@media (max-width: 959px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+  :root {
+    /* Type scale */
+    --m-h1: 2.125rem;      /* 34px — page titles (H1), incl. the homepage hero */
+    --m-h1-lh: 1.06;
+    --m-h2: 1.625rem;      /* 26px — section titles (H2) */
+    --m-h2-lh: 1.12;
+    --m-h3: 1.25rem;       /* 20px — card and sub-section titles (H3) */
+    --m-h3-lh: 1.2;
+    --m-h4: 1.0625rem;     /* 17px — small titles (H4) */
+    --m-lead: 1rem;        /* 16px — intro paragraphs */
+    --m-body: 0.9375rem;   /* 15px — running text */
+    --m-small: 0.875rem;   /* 14px — card text, lists */
+    --m-xs: 0.8125rem;     /* 13px — notes */
+    --m-label: 10.5px;     /* mono uppercase labels */
+    --m-lh: 1.55;
+
+    /* Spacing */
+    --m-section: 56px;     /* vertical padding of a section */
+    --m-head-gap: 28px;    /* heading block → content */
+    --m-card-pad: 20px;    /* inner padding of cards */
+    --m-gap: 14px;         /* gap between cards / items */
+    --m-btn-h: 46px;       /* button height (touch target ≥ 44px) */
+  }
+
+  /* ---------- Headings ---------- */
+  .display, .h1 {
+    font-size: var(--m-h1);
+    line-height: var(--m-h1-lh);
+    letter-spacing: -0.035em;
+  }
+  .h2, .fx-promo-title, .soon-word, .nav-link {
+    font-size: var(--m-h2);
+    line-height: var(--m-h2-lh);
+    letter-spacing: -0.03em;
+  }
+  .h3, .pkg-name, .principle h3, .project-name, .composer h2,
+  .timeline .t-k, .panel-tagline {
+    font-size: var(--m-h3);
+    line-height: var(--m-h3-lh);
+    letter-spacing: -0.02em;
+  }
+  .scope-col h4, .flow-t, .bulk-t {
+    font-size: var(--m-h4);
+    line-height: 1.25;
+  }
+
+  /* ---------- Text ---------- */
+  body { font-size: var(--m-body); }
+  .lead, .hero .lead, .category-head .lead, .fx-promo-lead { font-size: var(--m-lead); line-height: 1.6; }
+  .prose p, .intro-copy p, .cta-side p, .sub-lead, .site-footer { font-size: var(--m-body); line-height: 1.6; }
+  .pkg-desc, .pkg-inc li, .info-d, .scope-col li, .bulk p, .flow-d, .principle p,
+  .project-desc, .soon-text, .timeline p, .method .m-title, .method .m-value,
+  .online-note, .info-k span, .hero-index a { font-size: var(--m-small); line-height: var(--m-lh); }
+  .scope-note, .form-note, .fx-offer-note { font-size: var(--m-xs); }
+
+  /* ---------- Labels (mono, uppercase) ---------- */
+  .page-label, .hero-eyebrow, .pkg-inc-label, .field label, .methods-title,
+  .footer-col h2, .project-type, .fx-promo-eyebrow, .panel-top {
+    font-size: var(--m-label);
+    letter-spacing: 0.1em;
+  }
+  .page-label, .hero-eyebrow { margin-bottom: 16px; }
+
+  /* ---------- Buttons ---------- */
+  .btn, .pkg .btn {
+    min-height: var(--m-btn-h);
+    padding: 11px 18px;
+    font-size: var(--m-body);
+  }
+  .btn-sm { min-height: 42px; padding: 9px 14px; font-size: var(--m-small); }
+  .project-link { padding: 9px 14px; font-size: var(--m-small); }
+
+  /* ---------- Section spacing ---------- */
+  .section, .category { padding-block: var(--m-section); }
+  .section-head, .category-head, .section-title { margin-bottom: var(--m-head-gap); }
+  .section-head, .category-head { gap: 14px; }
+  .extras, .maint { margin-top: 44px; }
+  .steps-block { margin-top: 44px; }
+  .sub-head { margin-bottom: 18px; }
+  .sub-lead { margin-top: 10px; }
+  .hero { padding-top: calc(var(--header-h) + 32px); padding-bottom: 40px; }
+  .hero .display { margin-bottom: 18px; }
+  .hero .lead { margin-bottom: 26px; }
+  .hero-grid { gap: 32px; }
+  .page-hero { padding-top: calc(var(--header-h) + 40px); padding-bottom: 44px; }
+  .page-hero .h1 { margin-bottom: 18px; }
+  .intro-grid, .split { gap: 18px; }
+  .intro-copy .text-link { margin-top: 18px; }
+  .cp-cta { margin-top: 28px; }
+  .cta-band { padding-bottom: 56px; }
+  .cta-inner { padding-top: 36px; gap: 18px; }
+  .cta-side p { margin-bottom: 20px; }
+  .contact-section { padding-top: 40px; }
+
+  /* ---------- Cards ---------- */
+  .pkg { padding: var(--m-card-pad); }
+  .pkg-grid, .product-grid, .principles { gap: var(--m-gap); }
+  .pkg-name { margin-bottom: 8px; }
+  .pkg-desc { margin-bottom: 16px; }
+  .pkg-inc { margin-bottom: 18px; }
+  .pkg-inc-label { margin-bottom: 6px; }
+  .pkg-inc li { padding: 2px 0; }
+  .pkg-price { padding-top: 14px; }
+  .pkg-price .amount { font-size: 2rem; }
+  .pkg-maint { margin-block: 12px; }
+  .pv { margin: calc(var(--m-card-pad) * -1) calc(var(--m-card-pad) * -1) 20px; }
+  .pkg.is-featured::before { left: var(--m-card-pad); right: var(--m-card-pad); }
+
+  .info { padding-top: 16px; }
+  .info + .info { margin-top: 14px; }
+  .info-k { margin-bottom: 6px; }
+  .info-k strong { font-size: 1.25rem; }
+
+  /* About: principle cards follow their content */
+  .principle { padding: var(--m-card-pad); }
+  .principle-idx { margin-bottom: 18px; }
+  .principle-idx svg { width: 26px; height: 26px; }
+  .principle h3 { margin-bottom: 6px; }
+  .principle::before { left: var(--m-card-pad); }
+
+  /* About: timeline */
+  .timeline { margin-top: 32px; }
+  .timeline li { padding-bottom: 26px; }
+  .timeline .t-k { margin-bottom: 4px; }
+
+  /* Services: category links */
+  .cat-index a { min-height: 48px; padding: 10px 16px; }
+  .ci-name { font-size: 1rem; }
+
+  /* Services: maintenance included / not included */
+  .scope-col { padding: 16px 18px 12px; }
+  .scope-col h4 { margin-bottom: 6px; }
+  .scope-col li { padding: 7px 0; gap: 9px; }
+  .scope-col .i { margin-top: 2px; }
+
+  /* Services: NFC bulk notice — icon + title on one row, text full width below */
+  .bulk {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px 12px;
+    padding: 16px 18px;
+  }
+  .bulk > div { display: contents; }
+  .bulk-icon { grid-row: 1; grid-column: 1; }
+  .bulk-t { grid-row: 1; grid-column: 2; margin: 0; }
+  .bulk p { grid-row: 2; grid-column: 1 / -1; }
+
+  /* Services: NFC "how it works" */
+  .flow-step { padding-bottom: 16px; }
+
+  /* Services: QR "Coming Soon" */
+  .soon-band { grid-template-columns: 64px minmax(0, 1fr); gap: 18px; padding-block: 22px; }
+  .soon-motif { width: 64px; }
+  .soon-word { flex-wrap: wrap; }
+  .soon-text { margin-top: 8px; }
+
+  /* Home / Our Work: projects */
+  .projects-grid { gap: 32px; }
+  .project-meta { padding-top: 14px; }
+
+  /* Home: hero brand panel */
+  .hero-panel { padding: 20px 18px 12px; }
+  .panel-stage { min-height: 220px; }
+  .hero-index a { padding: 13px 2px; }
+
+  /* Home: the three facts as one compact row */
+  .hero-facts { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.12fr) minmax(0, 1.2fr); margin-top: 32px; }
+  .hero-facts div { padding: 12px 8px 0 0; }
+  .hero-facts div + div { padding-left: 10px; border-left: 1px solid var(--line); }
+  .hero-facts div:nth-child(3) {
+    grid-column: auto;
+    padding-left: 10px;
+    border-left: 1px solid var(--line);
+    border-top: 0;
+    margin-top: 0;
+  }
+  .hero-facts dt { font-size: 9.5px; letter-spacing: 0.06em; white-space: nowrap; margin-bottom: 3px; }
+  .hero-facts dd { font-size: 13.5px; line-height: 1.35; white-space: nowrap; }
+
+  /* ---------- Contact form ---------- */
+  .composer { padding: var(--m-card-pad); }
+  .composer-head { gap: 12px; margin-bottom: 18px; flex-wrap: nowrap; }
+  .composer-icon { width: 38px; height: 38px; }
+  .composer-icon .i { width: 19px; height: 19px; }
+  .composer h2 { min-width: 0; }
+  .field { margin-bottom: 14px; }
+  .field label { margin-bottom: 6px; }
+  /* 16px input text keeps iPhones from zooming in on focus */
+  .field input, .field textarea { padding: 11px 14px; font-size: 16px; }
+  .field input::placeholder, .field textarea::placeholder { font-size: var(--m-small); }
+  .field textarea { min-height: 128px; height: 128px; }
+  .form-actions { gap: 10px; }
+  .methods { gap: 8px; }
+  .method { padding: 14px 16px; gap: 12px; }
+  .method-icon { width: 40px; height: 40px; }
+  .method-main { grid-template-columns: 40px minmax(0, 1fr); }
+
+  /* ---------- Mobile menu ---------- */
+  .nav-link { padding: 15px 2px; }
+
+  /* ---------- Footer ---------- */
+  .site-footer { padding-top: 52px; }
+  .footer-grid { gap: 30px; padding-bottom: 36px; }
+  .footer-brand img { width: 80px; margin-bottom: 18px; }
+  .footer-col h2 { margin-bottom: 14px; }
+  .footer-col li + li { margin-top: 8px; }
+  .footer-col .footer-contact li + li { margin-top: 12px; }
+  .footer-bottom { padding-block: 18px; font-size: 12.5px; }
+  .footer-bottom p { white-space: nowrap; }
+}
+
+/* Very narrow phones (≤ 359px): facts become label / value rows */
+@media (max-width: 359px) {
+  .hero-facts { grid-template-columns: 1fr; }
+  .hero-facts div,
+  .hero-facts div + div,
+  .hero-facts div:nth-child(3) {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    margin: 0;
+  }
+  .hero-facts div:first-child { border-top: 0; }
+  .hero-facts dt { margin: 0; }
+  .footer-bottom { font-size: 11.5px; }
+}

@@ -234,11 +234,6 @@
       });
     });
 
-    document.querySelectorAll("[data-to-top]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        window.scrollTo({ top: 0, behavior: reduceMotion() ? "auto" : "smooth" });
-      });
-    });
   }
 
   /* ---------------- Reveal on scroll ---------------- */

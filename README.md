@@ -250,3 +250,23 @@ python3 -m http.server 8000     # then visit http://localhost:8000
 - **Visual motifs** echo the logo's geometry: square markers, interlocking rectangles and quarter-circle arcs.
 - Animations are subtle and are disabled for visitors who prefer reduced motion.
 - **SEO:** each page has its own title, description, canonical URL and Open Graph tags; `sitemap.xml`, `robots.txt` and Organization structured data are included. SEO foundations help search engines understand the site but cannot guarantee rankings.
+
+---
+
+## Festive campaign (Christmas / New Year 2026–2027)
+
+This copy of the site contains a temporary seasonal layer. Everything festive lives in:
+
+| File | What it does |
+|---|---|
+| `css/festive.css` | Festive styling, decorations, countdown bar, December offer section |
+| `js/festive.js` | Countdown deadline, flip countdown, sticky compact mode (toggles `html.fx-compact` via IntersectionObserver) |
+| `assets/festive/` | Decorative SVGs (evergreen, garland, bow, Santa hat, ornaments, sparkles, lights) |
+| `js/catalog.js` | `festivePrice` on the four website packages |
+| `js/translations.js` | Keys starting with `fx.` (Albanian and English) |
+
+- **Deadline:** 1 January 2027, 00:00:00 Europe/Tirane (`Date.UTC(2026, 11, 31, 23, 0, 0)` in `js/festive.js`), identical for every visitor.
+- **After the deadline:** the countdown stops at 00, the bar says "Gëzuar Vitin e Ri 2027!", the homepage offer section is hidden and package prices automatically return to the regular `price`.
+- **Sticky countdown:** the bar stays fixed at the top; full size at the top of the page, compact once the visitor scrolls (no scroll listener). The header sits right below it.
+- **Preview the end state:** open any page with `?fxdemo=15` to make the countdown finish in 15 seconds.
+- **To remove the campaign:** delete the `css/festive.css` / `js/festive.js` links and the `fx-bar` block from each page, the `fx-promo-wrap` section and `fx-greeting` line, and the `festivePrice` lines.

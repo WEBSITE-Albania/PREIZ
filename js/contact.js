@@ -33,9 +33,11 @@
           price: typeof found.item.price === "number" ? " (" + P.itemPrice(found.item) + ")" : ""
         });
       }
-      return P.t("contact.form.packageMsg", {
+      // December offer: quote the festive price in the prefilled message
+      var offerPrice = P.festive ? P.festive.priceOf(found.item) : found.item.price;
+      return P.t(offerPrice !== found.item.price ? "fx.form.packageMsg" : "contact.form.packageMsg", {
         name: P.L(found.item.name),
-        price: P.price(found.item.price)
+        price: P.price(offerPrice)
       });
     }
 

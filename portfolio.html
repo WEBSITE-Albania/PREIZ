@@ -34,6 +34,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&amp;family=Geist:wght@400..600&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/festive.css">
+  <link rel="stylesheet" href="css/mobile.css">
 
   <script>
     /* Apply the saved language before first paint to avoid a flash of the wrong language */
@@ -53,6 +55,23 @@
 </head>
 <body data-page="work">
   <a class="skip-link" href="#main" data-i18n="skip">Kalo te përmbajtja</a>
+
+  <!-- Festive countdown (Christmas / New Year campaign) — see js/festive.js -->
+  <div class="fx-bar" data-fx-countdown>
+    <div class="container fx-bar-inner">
+      <p class="fx-bar-caption"><span class="fx-when-live"><span class="fx-long" data-i18n="fx.bar.caption">Gëzuar Festat! Numërimi drejt vitit 2027</span><span class="fx-short" data-i18n="fx.bar.captionShort">Numërimi drejt 2027</span></span><span class="fx-when-ended" data-i18n="fx.bar.ended">Gëzuar Vitin e Ri 2027!</span></p>
+      <div class="fx-clock" role="timer" aria-live="off" aria-label="Numërimi deri në Vitin e Ri 2027" data-i18n-attr="aria-label:fx.bar.label">
+        <span class="sr-only" data-fx-sr></span>
+        <div class="fx-units" aria-hidden="true" style="display:contents">
+          <div class="fx-unit"><span class="fx-card" data-fx-card="days"></span><span class="fx-label" data-i18n="fx.bar.days">Ditë</span><img class="fx-hat" src="assets/festive/santa-hat.svg" width="46" height="32" alt=""></div>
+          <div class="fx-unit"><span class="fx-card" data-fx-card="hours"></span><span class="fx-label" data-i18n="fx.bar.hours">Orë</span></div>
+          <div class="fx-unit"><span class="fx-card" data-fx-card="minutes"></span><span class="fx-label" data-i18n="fx.bar.minutes">Min</span></div>
+          <div class="fx-unit"><span class="fx-card" data-fx-card="seconds"></span><span class="fx-label" data-i18n="fx.bar.seconds">Sek</span></div>
+        </div>
+      </div>
+      <a class="fx-bar-link" href="services.html#web-development"><span data-i18n="fx.bar.link">Ofertat e dhjetorit</span><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4.5-4.5L15 10l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    </div>
+  </div>
 
   <header class="site-header">
     <div class="container header-inner">
@@ -123,6 +142,7 @@
         <div class="footer-brand">
           <img src="assets/logo/preiz-logo-white.png" width="560" height="702" alt="PREIZ Co." decoding="async">
           <p data-i18n="footer.about">PREIZ Co. krijon zgjidhje dixhitale dhe produkte inovative, duke ndërthurur kreativitetin, teknologjinë dhe funksionalitetin. Operojmë online nga Shqipëria.</p>
+          <p class="fx-greeting" data-i18n="fx.footer.greeting">Ju urojmë festa të gëzuara dhe një vit 2027 plot suksese!</p>
         </div>
 
         <div class="footer-col">
@@ -148,13 +168,13 @@
       </div>
 
       <div class="footer-bottom">
-        <p data-i18n="footer.rights">© 2026 PREIZ Co. - Të gjitha të drejtat e rezervuara</p>
-        <button class="to-top" type="button" data-to-top><span data-i18n="footer.top">Kthehu lart</span><svg class="i" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11m-4.5-4.5L15 10l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <p data-i18n="footer.rights">© 2026 PREIZ Co. · Të drejtat e rezervuara</p>
       </div>
     </div>
   </footer>
 
   <script src="js/config.js" defer></script>
+  <script src="js/festive.js" defer></script>
   <script src="js/catalog.js" defer></script>
   <script src="js/projects.js" defer></script>
   <script src="js/translations.js" defer></script>

@@ -1,0 +1,849 @@
+/* =========================================================================
+   PREIZ Co. — FESTIVE LAYER (Christmas / New Year 2026–2027)
+   Temporary seasonal styling. Loaded after style.css and responsive.css.
+   Remove this file (and js/festive.js) to return to the regular design.
+   ========================================================================= */
+
+:root {
+  --fx-red: #A3122A;
+  --fx-red-2: #8A0F22;
+  --fx-red-deep: #6E0B1B;
+  --fx-red-ink: #8A1020;       /* digits on the white flip cards */
+  --fx-gold: #C9A24A;
+  --fx-gold-soft: #E9D49A;
+  --fx-gold-line: rgba(233, 212, 154, 0.55);
+  --fx-cream: #FBF8F2;
+
+  /* countdown bar: full height at the top of the page, compact once scrolled */
+  --fx-bar-h: 68px;
+  --fx-bar-ch: 46px;
+  --fx-bar-cur: var(--fx-bar-h);
+  --fx-ease: cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+html.fx-compact { --fx-bar-cur: var(--fx-bar-ch); }
+
+/* Registered so the flip-card size can transition smoothly between the two sizes
+   (browsers without @property simply switch instantly). */
+@property --fx-card-w { syntax: "<length>"; inherits: true; initial-value: 44px; }
+@property --fx-card-h { syntax: "<length>"; inherits: true; initial-value: 34px; }
+@property --fx-card-fs { syntax: "<length>"; inherits: true; initial-value: 20px; }
+
+/* =========================================================================
+   1. COUNTDOWN BAR
+   ========================================================================= */
+html:not(.js) .fx-bar { display: none; }
+/* The bar is fixed to the top of the screen; the fixed header sits right below
+   it. The page keeps a constant top offset (full bar height), so switching to
+   the compact bar never moves the content. js/festive.js only toggles
+   html.fx-compact (IntersectionObserver, no scroll listener). */
+html.js body { padding-top: var(--fx-bar-h); }
+html.js { scroll-padding-top: calc(var(--header-h) + var(--fx-bar-ch) + 24px); }
+html.js .pkg { scroll-margin-top: calc(var(--header-h) + var(--fx-bar-ch) + 32px); }
+html.js .extras, html.js .maint { scroll-margin-top: calc(var(--header-h) + var(--fx-bar-ch) + 24px); }
+html.js .site-header {
+  top: var(--fx-bar-cur);
+  transition: top 0.4s var(--fx-ease), border-color 0.3s var(--ease), background 0.3s var(--ease);
+}
+@media (max-width: 959px) {
+  html.js .site-nav { inset: calc(var(--header-h) + var(--fx-bar-cur)) 0 0 0; }
+}
+.fx-scroll-marker {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px; height: 24px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fx-bar {
+  --fx-card-w: 44px;
+  --fx-card-h: 34px;
+  --fx-card-fs: 20px;
+  position: fixed;
+  z-index: 101;
+  top: 0; left: 0; right: 0;
+  height: var(--fx-bar-cur);
+  transition: height 0.4s var(--fx-ease), --fx-card-w 0.4s var(--fx-ease), --fx-card-h 0.4s var(--fx-ease), --fx-card-fs 0.4s var(--fx-ease);
+  color: #FFF6EC;
+  background:
+    url("../assets/festive/sparkle-light.svg") no-repeat 7% 28% / 7px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 21% 74% / 5px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 33% 22% / 4px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 68% 78% / 5px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 79% 24% / 7px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 93% 70% / 4px,
+    radial-gradient(60% 140% at 50% 120%, rgba(255, 196, 120, 0.16), transparent 70%),
+    linear-gradient(100deg, #640A19 0%, #8E1326 26%, #A3172C 50%, #8E1326 74%, #640A19 100%);
+  border-bottom: 1px solid rgba(233, 212, 154, 0.35);
+  overflow: hidden;
+}
+/* soft warm twinkles */
+.fx-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    url("../assets/festive/sparkle-light.svg") no-repeat 27% 40% / 6px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 41% 70% / 4px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 60% 26% / 5px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 87% 44% / 6px;
+  opacity: 0.35;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fx-bar::before { animation: fx-twinkle 5.5s ease-in-out infinite alternate; }
+}
+@keyframes fx-twinkle { from { opacity: 0.15; } to { opacity: 0.85; } }
+
+.fx-bar-inner {
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 20px;
+}
+
+.fx-bar-caption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  min-width: 0;
+  transition: font-size 0.4s var(--fx-ease);
+}
+.fx-bar-caption::before {
+  content: "";
+  flex: none;
+  width: 12px; height: 12px;
+  background: url("../assets/festive/sparkle-light.svg") no-repeat center / contain;
+}
+.fx-short, .fx-when-ended { display: none; }
+.fx-ended .fx-when-live { display: none; }
+.fx-ended .fx-when-ended { display: inline; }
+
+.fx-bar-link {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fx-gold-soft);
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
+  white-space: nowrap;
+}
+.fx-bar-link .i { width: 15px; height: 15px; transition: transform 0.3s var(--ease); }
+.fx-bar-link:hover { color: #FFF3D6; border-bottom-color: var(--fx-gold-line); }
+.fx-bar-link:hover .i { transform: translateX(3px); }
+.fx-bar-link:focus-visible, .fx-bar :focus-visible { outline-color: #FFF3D6; }
+.fx-ended .fx-bar-link { visibility: hidden; }
+
+/* ---- Flip clock ---- */
+.fx-clock { display: flex; align-items: flex-start; gap: 8px; padding-top: 6px; transition: padding 0.4s var(--fx-ease), gap 0.4s var(--fx-ease); }
+.fx-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: gap 0.4s var(--fx-ease);
+}
+.fx-label {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: rgba(255, 239, 222, 0.78);
+  transition: font-size 0.4s var(--fx-ease);
+}
+
+.fx-card {
+  position: relative;
+  display: block;
+  min-width: var(--fx-card-w);
+  height: var(--fx-card-h);
+  padding-inline: 4px;
+  border-radius: 4px;
+  font-family: var(--f-mono);
+  font-size: var(--fx-card-fs);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: var(--fx-red-ink);
+  background: var(--fx-cream);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 1px 1px rgba(40, 0, 6, 0.35),
+    0 6px 12px -6px rgba(30, 0, 4, 0.7);
+  perspective: 160px;
+}
+/* sizing for the empty card before the script fills it */
+.fx-card:empty::before { content: "00"; visibility: hidden; line-height: var(--fx-card-h); }
+
+.fx-half, .fx-leaf {
+  position: absolute;
+  left: 0; right: 0;
+  height: 50%;
+  overflow: hidden;
+}
+.fx-half > span, .fx-leaf > span {
+  display: block;
+  height: var(--fx-card-h);
+  line-height: var(--fx-card-h);
+}
+.fx-top { top: 0; border-radius: 4px 4px 0 0; background: linear-gradient(#FFFFFF, #F7F3EC); }
+.fx-bot { bottom: 0; border-radius: 0 0 4px 4px; background: linear-gradient(#F2EDE5, var(--fx-cream)); }
+.fx-bot > span { margin-top: calc(var(--fx-card-h) / -2); }
+
+.fx-leaf { z-index: 2; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.fx-leaf.fx-top { transform-origin: 50% 100%; }
+.fx-leaf.fx-bot { transform-origin: 50% 0; transform: rotateX(90deg); }
+.is-flipping .fx-leaf.fx-top { animation: fx-fold 0.3s cubic-bezier(0.55, 0.06, 0.85, 0.45) both; }
+.is-flipping .fx-leaf.fx-bot { animation: fx-land 0.3s cubic-bezier(0.15, 0.6, 0.4, 1) 0.3s both; }
+/* soft shadow on the lower half while the leaf passes over it */
+.fx-half.fx-bot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(70, 0, 10, 0.18), transparent 70%);
+  opacity: 0;
+}
+.is-flipping .fx-half.fx-bot::after { animation: fx-shade 0.6s ease both; }
+@keyframes fx-fold { from { transform: rotateX(0deg); } to { transform: rotateX(-90deg); } }
+@keyframes fx-land { from { transform: rotateX(90deg); } to { transform: rotateX(0deg); } }
+@keyframes fx-shade { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+
+/* thin line across the middle of each display */
+.fx-card::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  margin-top: -0.5px;
+  background: rgba(110, 11, 27, 0.28);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+  z-index: 4;
+}
+
+/* Santa hat on the first display */
+.fx-hat {
+  position: absolute;
+  z-index: 5;
+  top: -13px;
+  left: -13px;
+  width: 31px;
+  height: auto;
+  transform: rotate(-24deg);
+  filter: drop-shadow(0 1px 1px rgba(40, 0, 6, 0.35));
+  pointer-events: none;
+  transition: width 0.4s var(--fx-ease), top 0.4s var(--fx-ease), left 0.4s var(--fx-ease);
+}
+
+/* ---- Compact (sticky) state ---- */
+.fx-compact .fx-bar { --fx-card-w: 36px; --fx-card-h: 25px; --fx-card-fs: 15.5px; }
+.fx-compact .fx-clock { padding-top: 4px; gap: 7px; }
+.fx-compact .fx-unit { gap: 2px; }
+.fx-compact .fx-label { font-size: 7.5px; }
+.fx-compact .fx-bar-caption { font-size: 12.5px; }
+.fx-compact .fx-hat { width: 23px; top: -8px; left: -9px; }
+
+/* =========================================================================
+   2. HEADER, NAVIGATION & SHARED DETAILS
+   ========================================================================= */
+.brand { position: relative; }
+.brand::after {
+  /* a small Santa hat resting on the top of the "P" mark (logo files unchanged) */
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: -6px;
+  width: 27px;
+  height: 19px;
+  background: url("../assets/festive/santa-hat.svg") no-repeat center / contain;
+  transform: rotate(-17deg);
+  transform-origin: 60% 100%;
+  filter: drop-shadow(0 1px 1px rgba(15, 22, 77, 0.25));
+  pointer-events: none;
+}
+.nav-link::after { background: var(--fx-red); }
+
+/* Closing CTA band: short red ribbon + gold star on the navy rule */
+.cta-inner::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: 0;
+  width: 72px; height: 3px;
+  background: var(--fx-red);
+  border-radius: 0 0 2px 2px;
+}
+.cta-inner::after {
+  content: "";
+  position: absolute;
+  top: -7px; left: 80px;
+  width: 13px; height: 13px;
+  background: url("../assets/festive/sparkle.svg") no-repeat center / contain;
+}
+
+/* Footer: ribbon edge, warm stars, seasonal greeting */
+.site-footer { position: relative; }
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(var(--fx-red), var(--fx-red)) top / 100% 3px no-repeat,
+              linear-gradient(var(--fx-gold-line), var(--fx-gold-line)) bottom / 100% 1px no-repeat;
+}
+.site-footer::after {
+  content: "";
+  position: absolute;
+  top: 28px;
+  right: max(var(--gutter), calc((100vw - var(--container)) / 2));
+  width: 120px;
+  height: 70px;
+  background:
+    url("../assets/festive/sparkle-light.svg") no-repeat 8% 30% / 11px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 58% 8% / 7px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 92% 62% / 9px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 40% 88% / 5px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.fx-greeting {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 18px;
+  max-width: 40ch;
+  font-family: var(--f-display);
+  font-size: 1.08rem;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--fx-gold-soft);
+}
+.fx-greeting::before {
+  content: "";
+  flex: none;
+  width: 14px; height: 14px;
+  margin-top: 4px;
+  background: url("../assets/festive/sparkle-light.svg") no-repeat center / contain;
+}
+
+/* =========================================================================
+   3. HOME
+   ========================================================================= */
+/* Hero brand panel: a few warm-gold sparkles around the orbit */
+.panel-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    url("../assets/festive/sparkle-light.svg") no-repeat 16% 18% / 14px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 86% 30% / 9px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 78% 84% / 12px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 24% 78% / 6px;
+  opacity: 0.8;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel-stage::before { animation: fx-twinkle 6s ease-in-out 1s infinite alternate; }
+}
+
+/* ---- December offer section ---- */
+.fx-promo-wrap { padding-bottom: clamp(56px, 7vw, 96px); }
+.hero:has(+ .fx-promo-wrap) { padding-bottom: clamp(28px, 3vw, 44px); }
+.fx-ended .fx-promo-wrap { display: none; }
+.fx-ended .hero:has(+ .fx-promo-wrap) { padding-bottom: clamp(56px, 7vw, 96px); }
+
+.fx-promo-frame { position: relative; }
+.fx-promo {
+  --fx-ribbon-x: clamp(64px, 12%, 160px);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(34px, 4.4vw, 56px) clamp(26px, 4.6vw, 64px);
+  padding-right: clamp(190px, 34%, 440px);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(28% 70% at calc(100% - var(--fx-ribbon-x) - 15px) 22%, rgba(255, 196, 120, 0.16), transparent 70%),
+    radial-gradient(50% 90% at 0% 100%, rgba(110, 124, 255, 0.16), transparent 70%),
+    var(--navy);
+  color: var(--on-dark);
+  box-shadow: var(--shadow);
+}
+/* vertical red ribbon with gold edges */
+.fx-promo-ribbon {
+  position: absolute;
+  z-index: -1;
+  top: 0; bottom: 0;
+  right: var(--fx-ribbon-x);
+  width: 30px;
+  background:
+    linear-gradient(90deg, var(--fx-gold-line) 0 1px, transparent 1px calc(100% - 1px), var(--fx-gold-line) calc(100% - 1px)),
+    linear-gradient(90deg, #7C0D1F, #B0192F 50%, #7C0D1F);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.25);
+}
+.fx-promo-bow {
+  position: absolute;
+  top: clamp(26px, 14%, 46px);
+  left: 50%;
+  width: 136px;
+  height: 113px;
+  margin-left: -68px;
+  background: url("../assets/festive/bow.svg") no-repeat center / contain;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.3));
+}
+/* warm sparkles beside the ribbon */
+.fx-promo::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0; bottom: 0; right: 0;
+  width: clamp(150px, 26%, 340px);
+  background:
+    url("../assets/festive/sparkle-light.svg") no-repeat 14% 62% / 12px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 30% 86% / 7px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 92% 70% / 9px,
+    url("../assets/festive/sparkle-light.svg") no-repeat 22% 22% / 6px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.fx-promo-sprig {
+  /* greenery tucked behind the ribbon, growing from the top-right corner */
+  position: absolute;
+  z-index: -1;
+  top: -6px;
+  right: -8px;
+  width: clamp(200px, 24vw, 290px);
+  aspect-ratio: 210 / 140;
+  background: url("../assets/festive/sprig-corner.svg") no-repeat top left / contain;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+.fx-promo-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fx-gold-soft);
+}
+.fx-promo-title {
+  font-family: var(--f-display);
+  font-optical-sizing: auto;
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  font-weight: 560;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--white);
+  max-width: 20ch;
+  text-wrap: balance;
+}
+.fx-promo-title em { font-style: normal; color: var(--fx-gold-soft); }
+.fx-promo-lead {
+  margin-top: 16px;
+  max-width: 46ch;
+  font-size: clamp(1.02rem, 1.25vw, 1.15rem);
+  color: var(--on-dark-muted);
+}
+.fx-promo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+  margin-top: 30px;
+}
+
+/* Festive button (used for the offer CTA only) */
+.btn-festive { --bg: var(--fx-red); --fg: var(--white); --bd: var(--fx-red); box-shadow: 0 0 0 1px rgba(233, 212, 154, 0.25) inset; }
+.btn-festive:hover { --bg: var(--fx-red-2); --bd: var(--fx-gold-soft); }
+.btn-festive:focus-visible { outline-color: var(--fx-gold-soft); }
+
+/* =========================================================================
+   4. INNER PAGES — a different small composition on each
+   ========================================================================= */
+/* About: evergreen sprig in the top-right corner of the page header */
+[data-page="about"] .page-hero::before {
+  content: "";
+  position: absolute;
+  top: var(--header-h);
+  right: 0;
+  width: clamp(150px, 20vw, 260px);
+  aspect-ratio: 210 / 140;
+  background: url("../assets/festive/sprig-corner.svg") no-repeat top left / contain;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+/* About timeline: the future point glows warm gold */
+.timeline li:last-child::after {
+  border-color: var(--fx-gold-soft);
+  background: rgba(233, 212, 154, 0.25);
+  box-shadow: 0 0 12px rgba(233, 212, 154, 0.55);
+}
+
+/* Products & Services: a string of warm lights under the header */
+[data-page="services"] .page-hero::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--header-h) - 2px);
+  left: 0; right: 0;
+  height: 46px;
+  background: url("../assets/festive/lights.svg") round no-repeat 0 0 / var(--fx-lights-w) auto;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* Our Work: a loose constellation of gold stars beside the heading */
+[data-page="work"] .page-hero::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--header-h) + 36px);
+  right: max(var(--gutter), calc((100vw - var(--container)) / 2 + 40px));
+  width: clamp(140px, 20vw, 260px);
+  height: clamp(120px, 15vw, 190px);
+  background:
+    url("../assets/festive/sparkle.svg") no-repeat 12% 20% / 18px,
+    url("../assets/festive/sparkle.svg") no-repeat 46% 6% / 9px,
+    url("../assets/festive/sparkle.svg") no-repeat 70% 38% / 24px,
+    url("../assets/festive/sparkle.svg") no-repeat 34% 64% / 8px,
+    url("../assets/festive/sparkle.svg") no-repeat 92% 86% / 12px,
+    url("../assets/festive/sparkle.svg") no-repeat 4% 92% / 6px;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* Contact: a small sprig resting on the message card */
+.composer { position: relative; }
+.composer::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  right: -12px;
+  width: 120px;
+  aspect-ratio: 210 / 140;
+  background: url("../assets/festive/sprig-corner.svg") no-repeat top left / contain;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+/* =========================================================================
+   5. PRICING (website packages)
+   ========================================================================= */
+.pkg.is-featured { border-color: var(--navy); }
+.pkg.is-featured::before { background: var(--fx-red); }
+
+.pkg-price.has-offer { flex-direction: column; align-items: flex-start; gap: 9px; }
+.pkg-price .was { line-height: 1; }
+.pkg-price .was del {
+  position: relative;
+  display: inline-block;
+  padding-inline: 2px;
+  text-decoration: none;
+  font-family: var(--f-mono);
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+.pkg-price .was del small { font-size: 0.85em; }
+/* diagonal strike-through */
+.pkg-price .was del::after {
+  content: "";
+  position: absolute;
+  left: -3px; right: -3px;
+  top: 50%;
+  height: 1.5px;
+  margin-top: -0.75px;
+  background: var(--fx-red);
+  border-radius: 1px;
+  transform: rotate(-9deg);
+}
+.pkg-price .amount.is-offer { color: var(--fx-red); }
+.pkg-price .amount.is-offer .cur { color: var(--fx-red); opacity: 0.85; }
+
+.fx-offer-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* =========================================================================
+   5b. ATMOSPHERE THROUGH THE PAGE
+   Warm lights, garlands, glows and small accents in the middle and lower
+   sections, so the season stays present while scrolling. Each section gets
+   its own composition; nothing animates.
+   ========================================================================= */
+:root {
+  --fx-glow-red: rgba(163, 18, 42, 0.07);
+  --fx-glow-gold: rgba(201, 162, 74, 0.13);
+  /* width of one swag; "round" fits a whole number of swags into the width,
+     so strings never end mid-swag at the screen edges */
+  --fx-garland-w: 260px;
+  --fx-lights-w: 210px;
+}
+@media (max-width: 639px) {
+  :root { --fx-garland-w: 180px; --fx-lights-w: 170px; }
+}
+
+/* Small red accents in labels */
+.page-label, .hero-eyebrow { color: var(--fx-red); }
+.text-link:hover { border-color: var(--fx-red); }
+.principle-idx > span { color: var(--fx-red); }
+
+/* Browser frames of the projects: red / gold / green dots (Home + Our Work) */
+.dots i:nth-child(1) { background: #C9505E; }
+.dots i:nth-child(2) { background: #D8B25E; }
+.dots i:nth-child(3) { background: #4E8A64; }
+
+/* ---------------- Home ---------------- */
+/* Intro: an evergreen garland with warm bulbs draped along the section edge */
+[aria-labelledby="intro-title"] {
+  background:
+    url("../assets/festive/garland.svg") round no-repeat left -4px / var(--fx-garland-w) auto,
+    radial-gradient(40% 70% at 0% 100%, var(--fx-glow-red), transparent 70%),
+    radial-gradient(35% 60% at 100% 30%, var(--fx-glow-gold), transparent 70%),
+    var(--white);
+}
+/* Projects: warm ambient glow and a few gold stars by the heading */
+[aria-labelledby="work-title"] {
+  background:
+    url("../assets/festive/sparkle.svg") no-repeat right max(var(--gutter), calc((100vw - var(--container)) / 2 + 24px)) top 64px / 16px,
+    url("../assets/festive/sparkle.svg") no-repeat right max(calc(var(--gutter) + 40px), calc((100vw - var(--container)) / 2 + 64px)) top 96px / 9px,
+    url("../assets/festive/sparkle.svg") no-repeat right max(calc(var(--gutter) + 14px), calc((100vw - var(--container)) / 2 + 38px)) top 118px / 6px,
+    radial-gradient(40% 50% at 100% 0%, var(--fx-glow-gold), transparent 70%),
+    radial-gradient(45% 50% at 0% 85%, var(--fx-glow-red), transparent 70%);
+}
+
+/* ---------------- About ---------------- */
+/* "Who we are": a red ribbon wrapped around the top-left corner, with gold stars
+   (the evergreen stays in the page header above, so the two don't repeat) */
+[aria-labelledby="what-title"] {
+  --fx-sash: clamp(96px, 11vw, 150px);
+  background:
+    url("../assets/festive/sparkle.svg") no-repeat calc(var(--fx-sash) * 0.78) calc(var(--fx-sash) * 0.2) / 15px,
+    url("../assets/festive/sparkle.svg") no-repeat calc(var(--fx-sash) * 1.02) calc(var(--fx-sash) * 0.42) / 8px,
+    url("../assets/festive/sparkle.svg") no-repeat calc(var(--fx-sash) * 0.3) calc(var(--fx-sash) * 0.72) / 10px,
+    linear-gradient(135deg, transparent 0 25%, rgba(233, 212, 154, 0.95) 25% 26.2%, #A3122A 26.2% 35.8%, rgba(233, 212, 154, 0.95) 35.8% 37%, transparent 37%) no-repeat left top / var(--fx-sash) var(--fx-sash),
+    radial-gradient(40% 70% at 100% 100%, var(--fx-glow-gold), transparent 70%),
+    var(--white);
+}
+/* Timeline (navy): a string of warm lights along the top + deep red glow */
+[aria-labelledby="dir-title"] {
+  background:
+    url("../assets/festive/lights-dark.svg") round no-repeat left top / var(--fx-lights-w) auto,
+    radial-gradient(45% 70% at 100% 100%, rgba(163, 18, 42, 0.28), transparent 70%),
+    radial-gradient(35% 60% at 0% 0%, rgba(233, 212, 154, 0.08), transparent 70%),
+    var(--navy);
+}
+/* Principles: warm glows */
+[aria-labelledby="approach-title"] {
+  background:
+    radial-gradient(35% 55% at 100% 10%, var(--fx-glow-gold), transparent 70%),
+    radial-gradient(35% 55% at 0% 100%, var(--fx-glow-red), transparent 70%);
+}
+.principle { position: relative; }
+.principle::before {
+  /* a short red ribbon on the top edge of each principle card */
+  content: "";
+  position: absolute;
+  top: -1px; left: 30px;
+  width: 36px; height: 3px;
+  background: var(--fx-red);
+  border-radius: 0 0 2px 2px;
+}
+
+/* ---------------- Products & Services ---------------- */
+#web-development {
+  background:
+    radial-gradient(40% 35% at 0% 6%, var(--fx-glow-red), transparent 70%),
+    radial-gradient(40% 30% at 100% 40%, var(--fx-glow-gold), transparent 70%),
+    radial-gradient(40% 30% at 0% 92%, var(--fx-glow-gold), transparent 70%);
+}
+.sub-head .h3::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em; height: 0.55em;
+  margin-right: 0.4em;
+  vertical-align: 0.12em;
+  background: url("../assets/festive/sparkle.svg") no-repeat center / contain;
+}
+.scope { box-shadow: inset 0 3px 0 var(--fx-red); }
+/* Google NFC: garland across the transition from the website packages */
+#google-nfc-cards {
+  background:
+    url("../assets/festive/garland.svg") round no-repeat left -4px / var(--fx-garland-w) auto,
+    radial-gradient(40% 30% at 100% 30%, var(--fx-glow-red), transparent 70%),
+    radial-gradient(40% 30% at 0% 75%, var(--fx-glow-gold), transparent 70%);
+}
+.bulk { box-shadow: inset 3px 0 0 var(--fx-red); }
+.bulk-icon { color: var(--fx-red); }
+.flow-icon { border-color: rgba(201, 162, 74, 0.55); box-shadow: 0 0 0 4px rgba(201, 162, 74, 0.08); }
+/* Coming soon: the single accent square turns festive red; a few gold stars */
+.qm-accent { fill: var(--fx-red); }
+#qr-code-products {
+  background:
+    url("../assets/festive/sparkle.svg") no-repeat right max(var(--gutter), calc((100vw - var(--container)) / 2 + 30px)) top 40% / 14px,
+    url("../assets/festive/sparkle.svg") no-repeat right max(calc(var(--gutter) + 30px), calc((100vw - var(--container)) / 2 + 60px)) top 58% / 8px,
+    radial-gradient(35% 60% at 100% 50%, var(--fx-glow-gold), transparent 70%);
+}
+
+/* ---------------- Our Work ---------------- */
+[data-page="work"] main > .section:not(.cta-band) {
+  background:
+    url("../assets/festive/lights.svg") round no-repeat left top / var(--fx-lights-w) auto,
+    radial-gradient(35% 30% at 100% 20%, var(--fx-glow-gold), transparent 70%),
+    radial-gradient(40% 30% at 0% 70%, var(--fx-glow-red), transparent 70%);
+}
+
+/* ---------------- Contact ---------------- */
+.contact-section {
+  background:
+    url("../assets/festive/lights.svg") round no-repeat left top / var(--fx-lights-w) auto,
+    radial-gradient(35% 50% at 100% 40%, var(--fx-glow-gold), transparent 70%),
+    radial-gradient(40% 50% at 0% 100%, var(--fx-glow-red), transparent 70%);
+}
+.method-main { position: relative; box-shadow: inset 0 3px 0 var(--fx-red); }
+.method-main::after {
+  content: "";
+  position: absolute;
+  top: 14px; right: 16px;
+  width: 12px; height: 12px;
+  background: url("../assets/festive/sparkle.svg") no-repeat center / contain;
+}
+
+/* ---------------- Closing CTA (shared) ---------------- */
+.cta-band {
+  background:
+    radial-gradient(35% 70% at 88% 70%, var(--fx-glow-gold), transparent 70%),
+    radial-gradient(30% 60% at 10% 100%, var(--fx-glow-red), transparent 70%);
+}
+/* Every page: three red and gold ornaments hanging from the rule, upper right */
+.cta-inner {
+  background: url("../assets/festive/ornaments.svg") no-repeat right 8px top / 60px 62px;
+}
+
+/* ---------------- Festive red for "included" marks and non-discounted NFC prices ---------------- */
+.pkg-inc li:not(.is-off) .i,
+.scope-col:not(.is-out) .i,
+.info.is-inc .info-k strong { color: var(--fx-red); }
+.soon-word em { color: var(--fx-red); }
+.product-grid .pkg-price .amount,
+.product-grid .pkg-price .amount .cur { color: var(--fx-red); }
+.bulk .price-hl { color: var(--fx-red); font-weight: 600; white-space: nowrap; }
+@media (max-width: 959px) {
+  .nav-link[aria-current="page"] { color: var(--fx-red); }
+}
+
+/* ---------------- Footer: a string of warm lights under the ribbon ---------------- */
+.site-footer {
+  background:
+    url("../assets/festive/lights-dark.svg") round no-repeat left top 4px / var(--fx-lights-w) auto,
+    radial-gradient(40% 50% at 100% 0%, rgba(163, 18, 42, 0.22), transparent 70%),
+    var(--ink);
+}
+
+/* =========================================================================
+   6. RESPONSIVE
+   ========================================================================= */
+@media (max-width: 959px) {
+  .fx-bar-inner { grid-template-columns: minmax(0, 1fr) auto; gap: 14px; }
+  .fx-bar-link { display: none; }
+  .fx-promo { padding-right: clamp(150px, 30%, 260px); --fx-ribbon-x: clamp(48px, 9%, 90px); }
+}
+
+@media (max-width: 639px) {
+  :root { --fx-bar-h: 58px; --fx-bar-ch: 38px; }
+  .fx-bar { --fx-card-w: 34px; --fx-card-h: 28px; --fx-card-fs: 16px; }
+  /* compact on phones: slim strip, still with all four units and labels */
+  .fx-compact .fx-bar { --fx-card-w: 27px; --fx-card-h: 20px; --fx-card-fs: 12.5px; }
+  .fx-compact .fx-clock { padding-top: 3px; gap: 4px; }
+  .fx-compact .fx-unit { gap: 1px; }
+  .fx-compact .fx-label { font-size: 6.5px; }
+  .fx-compact .fx-bar-caption { font-size: 10.5px; }
+  .fx-compact .fx-bar-caption::before { width: 8px; height: 8px; }
+  .fx-compact .fx-hat { width: 17px; top: -7px; left: -10px; }
+  .fx-long { display: none; }
+  .fx-short { display: inline; }
+  .fx-bar {
+    background:
+      url("../assets/festive/sparkle-light.svg") no-repeat 3% 22% / 5px,
+      url("../assets/festive/sparkle-light.svg") no-repeat 30% 82% / 4px,
+      url("../assets/festive/sparkle-light.svg") no-repeat 41% 18% / 5px,
+      radial-gradient(60% 140% at 50% 120%, rgba(255, 196, 120, 0.16), transparent 70%),
+      linear-gradient(100deg, #640A19 0%, #8E1326 30%, #A3172C 55%, #8E1326 80%, #640A19 100%);
+  }
+  .fx-bar::before { display: none; }
+  .fx-bar-caption { font-size: 12px; gap: 8px; max-width: 16ch; }
+  .fx-bar-caption::before { width: 10px; height: 10px; }
+  .fx-clock { gap: 5px; }
+  .fx-unit { gap: 2px; }
+  .fx-label { font-size: 8px; letter-spacing: 0.1em; }
+  .fx-hat { width: 25px; top: -10px; left: -10px; }
+  .fx-clock { padding-top: 5px; }
+  .fx-compact .fx-hat { width: 17px; top: -7px; left: -10px; }
+  .fx-compact .fx-clock { padding-top: 3px; }
+
+  /* promo: ribbon runs across the top edge, bow on the right */
+  .fx-promo { padding: 70px 22px 30px; }
+  .fx-promo-ribbon {
+    top: 18px; bottom: auto;
+    left: 0; right: 0;
+    width: auto; height: 16px;
+    background:
+      linear-gradient(var(--fx-gold-line) 0 1px, transparent 1px calc(100% - 1px), var(--fx-gold-line) calc(100% - 1px)),
+      linear-gradient(#7C0D1F, #B0192F 50%, #7C0D1F);
+  }
+  .fx-promo-bow { top: -18px; left: auto; right: 22px; margin-left: 0; width: 70px; height: 58px; }
+  .fx-promo::after { display: none; }
+  .fx-promo {
+    background:
+      radial-gradient(60% 40% at 82% 0%, rgba(255, 196, 120, 0.14), transparent 70%),
+      radial-gradient(50% 90% at 0% 100%, rgba(110, 124, 255, 0.16), transparent 70%),
+      var(--navy);
+  }
+  .fx-promo-sprig { top: -4px; right: -6px; width: 150px; }
+  .fx-promo-actions .btn { flex: 1 1 100%; justify-content: space-between; }
+
+  [data-page="work"] .page-hero::before { opacity: 0.5; }
+  .composer::before { width: 96px; right: -8px; top: -12px; }
+
+  /* lighter decorations on phones */
+  [aria-labelledby="work-title"] { background-position: right 20px top 40px, right 52px top 64px, right 30px top 82px, 0 0, 0 0; }
+  .contact-section { background-image: none, radial-gradient(35% 50% at 100% 40%, var(--fx-glow-gold), transparent 70%), radial-gradient(40% 50% at 0% 100%, var(--fx-glow-red), transparent 70%); }
+  .cta-inner { background-size: 40px 41px; background-position: right 2px top; }
+  .cta-inner .h2 { max-width: min(15ch, calc(100% - 52px)); }
+}
+
+@media (max-width: 360px) {
+  .fx-bar { --fx-card-w: 31px; --fx-card-fs: 15px; }
+  .fx-compact .fx-bar { --fx-card-w: 25px; --fx-card-fs: 12px; }
+  .fx-bar-inner { gap: 10px; }
+  .fx-clock { gap: 4px; }
+}
+
+/* =========================================================================
+   7. REDUCED MOTION — no flipping or twinkling
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .fx-card .fx-leaf, .fx-card .fx-half::after, .fx-bar::before, .panel-stage::before { animation: none !important; }
+  .fx-leaf.fx-bot { transform: rotateX(90deg); }
+  .fx-bar, .fx-clock, .fx-unit, .fx-label, .fx-bar-caption, .fx-hat, html.js .site-header { transition: none !important; }
+}
