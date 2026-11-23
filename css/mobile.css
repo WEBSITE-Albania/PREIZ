@@ -244,3 +244,27 @@
   .hero-facts dt { margin: 0; }
   .footer-bottom { font-size: 11.5px; }
 }
+
+/* =========================================================================
+   Mobile text wrapping fix (≤ 640px)
+   -------------------------------------------------------------------------
+   style.css sets `text-wrap: pretty` on every paragraph and `.lead`. On narrow
+   phone columns this ends lines early on purpose (to even out the right edge
+   and avoid a short last line) — Safari 26+ rebalances the whole paragraph,
+   Chrome the last lines. On phones that reads as premature wrapping, so here
+   paragraphs go back to normal wrapping. Headings keep `text-wrap: balance`.
+   Also lifts two narrow `ch` caps and a desktop column gap that left unused
+   space beside text once their layouts collapse to one column.
+   ========================================================================= */
+@media (max-width: 640px) {
+  p, .lead { text-wrap: wrap; }
+
+  /* Services: NFC "how it works" step text (desktop cap: 30ch) */
+  .flow-d { max-width: none; }
+
+  /* About: timeline text (desktop cap: 32ch) */
+  .timeline p { max-width: none; }
+
+  /* Services: "Good to know" items — 24px right gap was for side-by-side columns */
+  .info { padding-right: 0; }
+}
